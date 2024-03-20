@@ -9,6 +9,7 @@ import Foundation
 extension Remote {
     class Building: ObservableObject, Codable, Identifiable {
         
+        @Published var foreachid : String = UUID().uuidString
         @Published var id : String = ""
         @Published var customName : String = ""
         @Published var address: Remote.Address?

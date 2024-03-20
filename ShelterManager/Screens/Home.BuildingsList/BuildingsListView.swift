@@ -158,7 +158,7 @@ struct BuildingsListView: View {
                 
                 Section  {
                     
-                    ForEach($model.buildings, id: \.id) { $obj in
+                    ForEach($model.buildings, id: \.foreachid) { $obj in
                         NavigationLink {
                             BuildingDetailView(model: .init(building: obj, onUpdate: {}))
                         } label: {

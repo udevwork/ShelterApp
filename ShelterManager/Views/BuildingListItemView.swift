@@ -25,7 +25,7 @@ class BuildingListItemViewModel: ObservableObject {
 
 struct BuildingListItemView: View {
     
-    @StateObject var model: BuildingListItemViewModel
+    @ObservedObject var model: BuildingListItemViewModel
     @Binding var building: Remote.Building
     
     var body: some View {

@@ -157,6 +157,7 @@ class BuildingDetailModel: ObservableObject {
             self.avatarUrl = try await photoManager.uploadAvatar(imageData: imageData)
             self.fullSizeImage = nil
             self.showLoadingAlert = false
+            self.loadFullAvatarUrl()
         }
     }
     
