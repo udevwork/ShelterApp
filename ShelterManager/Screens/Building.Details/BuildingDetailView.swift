@@ -1,11 +1,23 @@
 import SwiftUI
+import _PhotosUI_SwiftUI
 import RealmSwift
 import Combine
 import AlertToast
+import Firebase
+import Kingfisher
 
 class BuildingDetailModel: ObservableObject {
     
-    @ObservedRealmObject var building: Building
+    @Published var building: Remote.Building
+    @Published var livingSpaces: [Remote.LivingSpace] = []
+    
+    @Published var avatarUrl: URL? = nil
+    @Published var showLoadingAlert: Bool = false
+    @Published var fullSizeImage: URL? = nil
+    @Published var isShowingFullScreen = false
+    var photoManager: PhotoUploaderManager
+    
+    private let db = Firestore.firestore()
     
     enum Filter: String, CaseIterable, Identifiable {
         case roomNumber, fullFirst, emptyFirst, floor
@@ -13,125 +25,190 @@ class BuildingDetailModel: ObservableObject {
     }
     
     @Published var selectedFlavor: Filter = .roomNumber
-
+    
     private var cancellable: AnyCancellable?
     var onUpdate: (()->())? = nil
     
-    init(building: Building, onUpdate: (()->())?) {
+    init(building: Remote.Building, onUpdate: (()->())?) {
         self.building = building
+        photoManager = PhotoUploaderManager(id: building.id)
+        fetchLivingSpaces()
+    }
+    
+    func fetchLivingSpaces() {
+        let ref = Fire.base.livingSpaces
         
-        if self.building.address == nil {
-            let realm = try! Realm()
+        Task {
+            let snap = try! await ref
+                .whereField("linkedBuildingID", isEqualTo: building.id)
+                .getDocuments()
             
-            try! realm.write {
-                let building = self.building.thaw()
-                building?.address = Address()
+            DispatchQueue.main.async {
+                self.livingSpaces = try! snap.decode()
+                self.objectWillChange.send()
             }
             
-            update()
+            
         }
+    }
+    
 
-    }
     
-    func createLivingSpace(){
-        let realm = try! Realm()
-        let room = LivingSpace()
+    func createLivingSpace() {
         
-        try! realm.write {
-            let building = self.building.thaw()
-            building?.livingSpaces.append(room)
-        }
+        let room = Remote.LivingSpace(number: "0",
+                                      linkedBuildingID: building.id,
+                                      maxUsersCount: 5)
         
-        update()
-    }
-    
-    func createResident() {
-        let realm = try! Realm()
-        let resident = Resident()
+        building.linkedLivingspacesIDs?.append(room.id)
         
-        try! realm.write {
-            let building = self.building.thaw()
-            building?.residents.append(resident)
-        }
+        let livingSpacesRef = Fire.base.livingSpaces.document(room.id)
+        let buildingRef = Fire.base.buildings.document(building.id)
         
-        update()
-    }
-    
-    func copyToClipboard() {
-        if let address = self.building.address?.fullAddress() {
-            let pasteboard = UIPasteboard.general
-            pasteboard.string = address
+        let livingSpacesData = room.toDictionary()
+        let buildingData = building.toDictionary()
+        
+        Task {
+            try? await livingSpacesRef.setData(livingSpacesData)
+            try? await buildingRef.setData(buildingData)
+            self.livingSpaces.append(room)
         }
     }
-    
-    func makeCopyOfResident(residentToCopy: Resident) {
+  
+    func createAndSetupAddress() {
+        let batch = db.batch()
         
-        let realm = try! Realm()
+        guard let address = building.address else { return }
         
-        let newResident = Resident()
-        newResident.secondName = residentToCopy.secondName
+        let addressRef = Fire.base.addresses.document(address.id)
+        let buildingRef = Fire.base.buildings.document(building.id)
         
-        try! realm.write {
+        let addressData = address.toDictionary()
+        let buildingData = building.toDictionary()
+        
+        Task {
+            try? await addressRef.setData(addressData)
+            try? await buildingRef.setData(buildingData)
             
-            if let roomCopy = residentToCopy.livingSpace,
-               let room = realm.object(ofType: LivingSpace.self, forPrimaryKey: roomCopy._id) {
-                newResident.livingSpace = room
+            let users = try? await Fire.base.users.whereField("linkedBuildingID", isEqualTo: building.id).getDocuments()
+            
+            users?.documents.forEach({ snap in
+                batch.updateData(["shortAddressLabel" : building.address?.fullAddress() ?? "",
+                                  "linkedAddressID": building.address?.id ?? ""], forDocument: snap.reference)
+                
+            })
+          
+            try await batch.commit()
+            DispatchQueue.main.async {
+             
+                self.objectWillChange.send()
+            }
+            self.update()
+        }
+    }
+    
+    func delete(livingSpace: Remote.LivingSpace) {
+        
+        let deletedLivingspaceID = livingSpace.id
+        Fire.base.livingSpaces.document(deletedLivingspaceID).delete()
+        let batch = db.batch()
+        
+        Task {
+            let usersSnap = try await Fire.base.users.whereField("linkedLivingspaceID", isEqualTo: deletedLivingspaceID).getDocuments().documents
+            let buildingRef = Fire.base.buildings.document(building.id)
+            
+            var _userIDs: [String] = []
+            for userDoc in usersSnap {
+                _userIDs.append(userDoc.documentID)
+                let doc = Fire.base.users.document(userDoc.documentID)
+                
+                let dict = ["linkedAddressID": "",
+                            "linkedBuildingID": "",
+                            "linkedLivingspaceID": "",
+                            "shortAddressLabel": "",
+                            "shortLivingSpaceLabel": ""]
+                
+                batch.updateData(dict, forDocument: doc)
             }
             
-            realm.add(newResident)
-            let building = self.building.thaw()
-            building?.residents.append(newResident)
+            batch.updateData(["linkedUsersIDs": FieldValue.arrayRemove(_userIDs)], forDocument: buildingRef)
+            batch.updateData(["linkedLivingspacesIDs": FieldValue.arrayRemove([deletedLivingspaceID])], forDocument: buildingRef)
+            
+            try await batch.commit()
+            
+            // delete notes
+            await Remote.Note.deleteNotes(for: deletedLivingspaceID)
+            
+            // delete from ui
+            if let indexToDelete = self.livingSpaces.firstIndex(where: { $0.id == deletedLivingspaceID }) {
+                DispatchQueue.main.async {
+                    self.livingSpaces.remove(at: indexToDelete)
+                }
+            }
+       
         }
-        
-        update()
     }
     
-    func addToFavorire(resident: Resident){
-        let realm = try! Realm()
-        try! realm.write {
-            resident.thaw()?.isFavorite.toggle()
+    
+    // AVATAR
+    func uploadImage(imageData: Data) {
+        self.showLoadingAlert = true
+        Task {
+            self.avatarUrl = try await photoManager.uploadAvatar(imageData: imageData)
+            self.fullSizeImage = nil
+            self.showLoadingAlert = false
         }
     }
     
-    func delete(resident: Resident){
-        let realm = try! Realm()
-        try! realm.write {
-            if let objToDelete = realm.object(ofType: Resident.self, forPrimaryKey: resident._id) {
-                realm.delete(objToDelete)
-            } else {
-                print("fuck")
-            }
+    func getThumbnaliAvatarUrl() {
+        if fullSizeImage != nil {
+            return
         }
-        self.update()
+        Task {
+            self.avatarUrl = try await photoManager.loadAvatar()
+            self.loadFullAvatarUrl()
+        }
     }
-
-    func delete(livingSpace: LivingSpace){
-        let realm = try! Realm()
-        try! realm.write {
-            if let objToDelete = realm.object(ofType: LivingSpace.self, forPrimaryKey: livingSpace._id) {
-                realm.delete(objToDelete)
-            } else {
-                print("fuck")
+    
+    func getFullAvatarUrlFrom() {
+        if fullSizeImage != nil {
+            self.isShowingFullScreen = true
+            return
+        }
+        if let url = avatarUrl {
+            self.showLoadingAlert = true
+            Task {
+                self.avatarUrl = try await photoManager.getFullAvatarUrlFrom(url: url)
+                self.fullSizeImage = self.avatarUrl
+                self.showLoadingAlert = false
+                self.isShowingFullScreen = true
             }
         }
-        self.update()
+    }
+    
+    func loadFullAvatarUrl() {
+        if fullSizeImage != nil {
+            return
+        }
+        if let url = avatarUrl {
+            Task {
+                self.avatarUrl = try await photoManager.getFullAvatarUrlFrom(url: url)
+                self.fullSizeImage = self.avatarUrl
+            }
+        }
     }
     
     func update() {
-        DispatchQueue.main.asyncAfter(deadline: .now()+0.5, execute: {
-            withAnimation {
-                self.objectWillChange.send()
-            }
-        })
+        self.fetchLivingSpaces()
+
     }
 }
 
 struct BuildingDetailView: View {
     
     @EnvironmentObject var clipboard: InAppClipboard
-   // @Environment(\.dismiss) private var dismiss
     @StateObject var model: BuildingDetailModel
-    
+    @State private var avatarItem: PhotosPickerItem?
     @State private var showToast = false
     
     enum ModelViews: String, Identifiable {
@@ -141,58 +218,87 @@ struct BuildingDetailView: View {
     }
     
     @State private var sheets : ModelViews? = nil
-
+    
     var body: some View {
         
         List {
-            Section("Building name") {
-                HStack {
-                    Text("Name:").foregroundColor(Color(UIColor.secondaryLabel))
-                    TextField("building custom name", text: $model.building.customBuildingName)
-                }
+            if UserDefaults.standard.bool(forKey: "buildingDitailPhotoEnabled") {
+                KFImage.url(model.avatarUrl)
+                    .placeholder({ Image("default-buildingpic") })
+                    .loadDiskFileSynchronously()
+                    .cacheMemoryOnly()
+                    .fade(duration: 0.25)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 150)
+                    .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    .onTapGesture {
+                        self.model.getFullAvatarUrlFrom()
+                    }
             }
-            
-            Section("Address") {
-                HStack {
+            Section("Information") {
+                
+                TextInput(text: $model.building.customName,
+                          title: "Name: ",
+                          systemImage: "pencil")
+                
+                VStack {
                     Button {
                         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
                         self.sheets = .city
                     } label: {
-                        AddressListItemView(address: $model.building.address)
+                        AddressListItemWithMapView(address: $model.building.address)
                     }
                 }
-              
-            }
             
-            Section("Total info for this building") {
-                HStack(spacing: 10) {
-                    Text("Living spaces:")
-                    Text("\(model.building.livingSpaces.count)").bold()
-                }
-                HStack(spacing: 10) {
-                    Text("Residents:")
-                    Text("\(model.building.residents.count)").bold()
+                Button {
+                    model.createAndSetupAddress()
+                    UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                    showToast.toggle()
+                } label: {
+                    Label("Save", systemImage: "icloud.and.arrow.up.fill")
                 }
             }
             
-            Section("Living spaces") {
+            Section() {
+                NavigationLink {
+                    DocumentsView(model: .init(id: model.building.id), editble: true)
+                } label: {
+                    Label("Documents", systemImage: "doc.on.doc.fill")
+                }.foregroundColor(Color(UIColor.label))
+                
+                NavigationLink {
+                    PhotoGalleryView(model: .init(id: model.building.id))
+                } label: {
+                    Label("Photos", systemImage: "photo.on.rectangle.angled")
+                }.foregroundColor(Color(UIColor.label))
+                
+                NavigationLink {
+                    UserNotesView(model: .init(id: model.building.id), editble: true)
+                } label: {
+                    Label("Notes", systemImage: "note.text")
+                }.foregroundColor(Color(UIColor.label))
+                
+                NavigationLink {
+                    ResidentsRemoteList(model: .init(buildingID: model.building.id))
+                } label: {
+                    Label("Residents", systemImage: "person.2.fill")
+                }.foregroundColor(Color(UIColor.label))
+            }
+            
+            Section("Livingspaces") {
                 
                 Picker("Sorting", selection: $model.selectedFlavor) {
                     Text("Room number").tag(BuildingDetailModel.Filter.roomNumber)
                     Text("Full first").tag(BuildingDetailModel.Filter.fullFirst)
                     Text("Empty first").tag(BuildingDetailModel.Filter.emptyFirst)
                     Text("Floor").tag(BuildingDetailModel.Filter.floor)
-                }
+                }.listRowSeparator(.hidden, edges: .all)
                 
-                HStack {
-                    Text("Room №")
-                    Spacer()
-                    Text("current / max")
-                }.font(.footnote).foregroundColor(.gray)
                 
-                ForEach(model.building.livingSpaces.sortingWith(filter: model.selectedFlavor)) { obj in
+                ForEach(model.livingSpaces.sortingWith(filter: model.selectedFlavor)) { obj in
                     NavigationLink {
-                        LivingSpaceDetails(model: .init(livingSpace: obj))
+                        LivingSpaceDetails(model: .init(livingSpace: obj, building: model.building, onUpdate: { self.model.update() }), buildingModel: model)
                     } label: {
                         LivingSpaceListItem(livingSpace: obj)
                             .contextMenu {
@@ -205,143 +311,88 @@ struct BuildingDetailView: View {
                     }
                 }
                 
-               
-                Button {
-                    UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                    self.showToast.toggle()
-                    model.createLivingSpace()
-                } label: {
-                    Label("Create new livingspace", systemImage: "plus.circle.fill")
+                HStack(spacing: 3) {
+                    Text("Total:")
+                    Text("\(model.livingSpaces.count)").bold()
                 }
-
             }
             
-            Section("Residents") {
-                if let residentInClipboard = clipboard.resident {
-                    Button {
-                        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                        self.showToast.toggle()
-                        let realm = try! Realm()
-                        if let residentInClipboard = residentInClipboard.thaw() {
-                            if let oldBuilding = residentInClipboard.assignee.first(where: { b in
-                                b.residents.firstIndex(of: residentInClipboard) != nil
-                            }) {
-                                if let indexToDelete =  oldBuilding.residents.firstIndex(of: residentInClipboard) {
-                                    try! realm.write {
-                                        oldBuilding.residents.remove(at: indexToDelete)
-                                        residentInClipboard.livingSpace = nil
-                                        model.building.thaw()?.residents.append(residentInClipboard)
-                                        clipboard.resident = nil
-                                        self.showToast.toggle()
-                                    }
-                                }
-                            }
-                        }
-                    } label: {
-                        Label("Append from clipboard", systemImage: "paperclip.circle.fill")
-                    }
-                }
-                
-                ForEach(model.building.residents.sorted(by: \.secondName)) { obj in
-                    NavigationLink {
-                        ResidentDetails(model: .init(resident: obj))
-                    } label: {
-                        ResidentListItemView(resident: obj).contextMenu {
-                            Button {
-                                model.addToFavorire(resident: obj)
-                            } label: {
-                                if obj.isFavorite {
-                                    Label("Remove from Favorites", systemImage: "heart.fill")
+            Button {
+                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                self.model.createLivingSpace()
+            } label: {
+                Label("Create livingspace", systemImage: "plus.circle.fill")
+            }
+            
+            Section() {
+                PhotosPicker("Change picture", selection: $avatarItem, matching: .images)
+                    .onChange(of: avatarItem)  {
+                        Task {
+                            if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
+                                let renderer = ImageRenderer(content: loaded)
+                                let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.0 : 0.7
+                                if let data = renderer.uiImage?.jpegData(compressionQuality: compression) {
+                                    model.uploadImage(imageData: data)
                                 } else {
-                                    Label("Add to Favorites", systemImage: "heart")
+                                    print("Failed 1")
                                 }
-                            }
-                            Button {
-                                model.makeCopyOfResident(residentToCopy: obj)
-                            } label: {
-                                Label("Create copy", systemImage: "doc.on.doc.fill")
-                            }
-                            
-                            Button {
-                                model.delete(resident: obj)
-                            } label: {
-                                Label("Delete", systemImage: "trash.fill").foregroundStyle(Color.red)
+                            } else {
+                                print("Failed 2")
                             }
                         }
                     }
-                }
-                Button {
-                    UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                    self.showToast.toggle()
-                    model.createResident()
-                } label: {
-                    Label("Create new resident", systemImage: "plus.circle.fill")
-                }
             }
             
-            Section("Data") {
-                if let address = model.building.address {
-                    NavigationLink {
-                        MapView(address: address)
-                    } label: {
-                        HStack {
-                            Image(systemName: "mappin.and.ellipse.circle.fill")
-                            Text("Show on map")
-                        }
-                    }
-                }
-                Button {
-                    UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                    showToast.toggle()
-                    model.copyToClipboard()
-                } label: {
-                    HStack {
-                        Image(systemName: "doc.on.doc.fill")
-                        Text("Copy full address")
-                    }
-                }
-                Button {
-                    UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                    self.sheets = .optimizer
-                } label: {
-                    HStack {
-                        Image(systemName: "chart.line.uptrend.xyaxis")
-                        Text("Optimizer")
-                    }
-                }
-            }
         }
         .scrollDismissesKeyboard(.interactively)
-        .navigationTitle(model.building.customBuildingName)
+        .navigationTitle(model.building.customName)
         .refreshable {
             model.update()
         }
-        .onAppear(perform: {
-            model.update()
-        })
         .sheet(item: $sheets) {
-            self.model.update()
-            
+
         } content: { item in
             if item == .city {
-                if self.model.building.address != nil {
-                    AddressAutocompleteModalView(viewModel: .init(), autocomplete: $model.building.address)
+                AddressAutocompleteModalView(viewModel: .init(), autocomplete: $model.building.address)
+            }
+        }
+        .sheet(isPresented: $model.isShowingFullScreen) {
+            VStack {
+                if let url = model.fullSizeImage {
+                    FullScreenImageView(url: url)
+                } else {
+                    Text("invalid url")
                 }
             }
-            
-            if item == .optimizer {
-                BuildingOptimizedModalView(building: self.model.building)
+        }
+        .toast(isPresenting: $showToast){
+            AlertToast(type: .regular, title: "OK!")
+        }
+        .toast(isPresenting: $model.showLoadingAlert) {
+            AlertToast(type: .loading, title: "Loading")
+        }
+        .toolbar {
+            if let address = model.building.address {
+                NavigationLink {
+                    MapView(address: address)
+                } label: {
+                    HStack {
+                        Image(systemName: "mappin.and.ellipse.circle.fill")
+                        Text("Map")
+                    }
+                }
             }
         }
-        .toast(isPresenting: $showToast) {
-            AlertToast(displayMode: .alert, type: .complete(.green))
+        .onAppear {
+            if UserDefaults.standard.bool(forKey: "buildingDitailPhotoEnabled") {
+                model.getThumbnaliAvatarUrl()
+            }
         }
-        
     }
 }
 
-#Preview {
-    NavigationStack {
-        BuildingDetailView(model: BuildingDetailModel.init(building: Building(address: Address()), onUpdate: {}))
-    }
-}
+//#Preview {
+//    NavigationStack {
+//        BuildingDetailView(model: BuildingDetailModel.init(building: Building(address: Address()), onUpdate: {}))
+//    }
+//}

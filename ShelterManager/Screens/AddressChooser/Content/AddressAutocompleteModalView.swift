@@ -11,37 +11,45 @@ struct AddressAutocompleteModalView: View {
     
     @StateObject var viewModel: ContentViewModel
     @State private var isFocusedTextField: Bool = false
-    @Binding var autocomplete: Address?
+    @Binding var autocomplete: Remote.Address?
     @Environment(\.dismiss) var dismiss
 
     
     var body: some View {
         NavigationStack {
-            if isFocusedTextField || viewModel.searchableText.isEmpty == false {
-                Button {
-                    //viewModel.searchableText = autocomplete.title + " " + autocomplete.subtitle
-                    if autocomplete == nil {
-                        //autocomplete = address
-                        autocomplete = .init(title: viewModel.searchableText, subtitle: "")
-                    }
-                    dismiss()
-                } label: {
-                    Text("Apply selected address")
-                }
-            }
+           
             List {
-                
+                if autocomplete != nil {
+                    Section ("Selected Address:"){
+                    Button {
+                        //viewModel.searchableText = autocomplete.title + " " + autocomplete.subtitle
+                        if autocomplete == nil {
+                            //autocomplete = address
+                            autocomplete = .init(title: viewModel.searchableText, subtitle: "")
+                        }
+                        dismiss()
+                    } label: {
+                        VStack(alignment: .leading) {
+                            
+                            AddressListItemView(address: autocomplete).foregroundStyle(Color(uiColor: UIColor.label))
+                            
+                            Label("Apply selected address", systemImage: "checkmark.circle.fill")
+                                .padding(14).background(.gray.opacity(0.1)).cornerRadius(13)
+                        }
+                    }
+                }
+                }
+               
                 if self.viewModel.results.isEmpty {
                     
                     Text("Search is empty").multilineTextAlignment(.center).frame(maxWidth: .infinity).foregroundStyle(.gray).listRowBackground(Color.clear)
                 } else {
                     ForEach(self.viewModel.results) { address in
                         Button {
-                            
                             viewModel.searchableText = address.title + " " + address.subtitle
                             autocomplete = address
                         } label: {
-                            AddressListItemView(address: .constant(address))
+                            AddressListItemView(address: address).foregroundStyle(Color(uiColor: UIColor.label))
                         }
                     }
                 }
@@ -69,6 +77,6 @@ struct AddressAutocompleteModalView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        AddressAutocompleteModalView(viewModel: ContentViewModel(), autocomplete: .constant(Address())  )
+        AddressAutocompleteModalView(viewModel: ContentViewModel(), autocomplete: .constant(Remote.Address())  )
     }
 }

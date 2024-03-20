@@ -1,71 +1,138 @@
 import SwiftUI
 import RealmSwift
 import AlertToast
+import FirebaseFirestore
+import Firebase
+import FirebaseStorage
 
 class BuildingsListModel: ObservableObject {
-    let realm = try! Realm()
-    @Published var buildingsList: [Building] = []
-    @ObservedResults(Resident.self) var residents
     
+    struct infoResult {
+        var maxOfResepients: Int
+        var totalResepients: Int
+    }
     
-    @ObservedResults(Resident.self) var findedResidents
-    @ObservedResults(LivingSpace.self) var findedLivingSpace
-    @ObservedResults(Building.self) var findedBuildings
+    @Published var buildings: [Remote.Building] = []
+    @Published var users: Int = 0
+    @Published var maxUsers: Int = 0
     
-    @Published var searchText = ""
+    init() {
+        fetch()
+    }
     
-    init(){
-        update()
+    func fetch() {
+        Task {
+            let decoded: [Remote.Building] = try await Fire.base.buildings.getDocuments().decode()
+            DispatchQueue.main.async {
+                self.buildings = decoded
+            }
+            try await fetchLivingSpases()
+        }
+    }
+    
+    func fetchLivingSpases() async throws {
+        
+        let snap = try await Fire.base.livingSpaces.getDocuments()
+        let rooms: [Remote.LivingSpace] = try snap.decode()
+        
+        var buildingsDict: [String: infoResult] = [:]
+        self.buildings.forEach {
+            buildingsDict[$0.id] = infoResult(maxOfResepients: 0, totalResepients: 0)
+        }
+        
+        var temp_users: Int = 0
+        var temp_maxUsers: Int = 0
+        
+        rooms.forEach { room in
+            temp_users += room.linkedUserIDs.count
+            temp_maxUsers += room.maxUsersCount
+            
+            // findBuilding
+            let buildingID = room.linkedBuildingID
+            buildingsDict[buildingID]?.maxOfResepients += room.linkedUserIDs.count
+            buildingsDict[buildingID]?.totalResepients += room.maxUsersCount
+        }
+        
+        buildingsDict.forEach { (key: String, value: infoResult) in
+            
+            let building = self.buildings.first {
+                $0.id == key
+            }
+            
+            DispatchQueue.main.async {
+                building?.max = value.maxOfResepients
+                building?.total = value.totalResepients
+                self.objectWillChange.send()
+            }
+        }
+        DispatchQueue.main.async { [temp_users, temp_maxUsers] in
+            self.users = temp_users
+            self.maxUsers = temp_maxUsers
+        }
     }
     
     func createBuilding() {
-     
-        let building = Building(address: nil)
-        try! realm.write {
-            realm.add(building)
-        }
-        update()
+        let newBuilding = Remote.Building()
+        let data = newBuilding.toDictionary()
+        let ref = Fire.base.buildings.document(newBuilding.id)
+        ref.setData(data)
+        self.buildings.append(newBuilding)
     }
     
     func search(_ searchableText: String) {
         guard searchableText.isEmpty == false else { return }
     }
     
-    func delete(building: Building){
+    func delete(building: Remote.Building){
+        
+        let deletedBuildingID = building.id
+        Fire.base.livingSpaces.document(deletedBuildingID).delete()
+        let batch = Fire.base.db.batch() 
+        
 
-        try! realm.write {
-            building.thaw()?.deleted = true
+        Task {
+            let usersSnap = try await Fire.base.users.whereField("linkedBuildingID", isEqualTo: deletedBuildingID).getDocuments().documents
             
+            var _userIDs: [String] = []
+            for userDoc in usersSnap {
+                _userIDs.append(userDoc.documentID)
+                let doc = Fire.base.users.document(userDoc.documentID)
+                
+                let dict = ["linkedAddressID": "",
+                            "linkedBuildingID": "",
+                            "linkedLivingspaceID": "",
+                            "shortAddressLabel": "",
+                            "shortLivingSpaceLabel": ""]
+                
+                batch.updateData(dict, forDocument: doc)
+            }
+            
+            let livingSpacesSnap = try await Fire.base.livingSpaces.whereField("linkedBuildingID", isEqualTo: deletedBuildingID).getDocuments().documents
+          
+            livingSpacesSnap.forEach { snap in
+                batch.deleteDocument(snap.reference)
+            }
+            
+            try await batch.commit()
+            
+            // delete notes
+            await Remote.Note.deleteNotes(for: deletedBuildingID)
+            
+            // delete from ui
+            if let indexToDelete = self.buildings.firstIndex(where: { $0.id == deletedBuildingID }) {
+                DispatchQueue.main.async {
+                    self.buildings.remove(at: indexToDelete)
+                }
+            }
+     
         }
         
-        self.update()
     }
     
     func update() {
-        DispatchQueue.main.asyncAfter(deadline: .now()+0.5, execute: {
-            withAnimation {
-                self.buildingsList = Array(self.realm.objects(Building.self).filter("deleted == false"))
-                //self.objectWillChange.send()
-            }
-        })
+        
     }
     
-    // can be optimized by create new value for counter and +/- on room created
-    
-    struct infoResult {
-        let maxOfResepients: Int
-        let totalResepients: Int
-    }
-    
-    func culcMax() -> infoResult {
-        var max: Int = 0
-        var total: Int = 0
-        buildingsList.forEach { build in
-            max += build.culcMax()
-            total += build.residents.count
-        }
-        return infoResult(maxOfResepients: max, totalResepients: total)
-    }
 }
 
 struct BuildingsListView: View {
@@ -79,122 +146,48 @@ struct BuildingsListView: View {
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                
-                if model.searchText.isEmpty == false {
-                    Section("Search results") {
-                        ForEach(model.findedBuildings.find(with:model.searchText)) { obj in
-                            NavigationLink {
-                                BuildingDetailView(model: .init(building: obj, onUpdate: {}))
-                            } label: {
-                                BuildingListItemView(building: obj)
-                            }
-                        }
-                        
-                        ForEach(model.findedResidents.find(with:model.searchText)) { obj in
-                            NavigationLink {
-                                ResidentDetails(model: .init(resident: obj))
-                            } label: {
-                                ResidentListItemView(resident: obj)
-                            }
-                        }
-                        
-                        ForEach(model.findedLivingSpace.find(with:model.searchText)) { obj in
-                            NavigationLink {
-                                LivingSpaceDetails(model: .init(livingSpace: obj))
-                            } label: {
-                                LivingSpaceListItem(livingSpace: obj)
-                            }
-                        }
-                    }
-                } else {
-                    Section("Residents information for all buildings") {
-                        let num = model.culcMax()
-                        HStack (spacing: 10) {
-                            Text("Maximum residents:")
-                            Text("\(num.maxOfResepients)").bold()
-                        }
-                        
-                        HStack (spacing: 10) {
-                            Text("Total staing:")
-                            Text("\(num.totalResepients)").bold()
-                        }
-                    }
-                    Section("Buildings list") {
-                        
-                        ForEach(model.buildingsList, id: \._id) { buildingObj in
-                            if !buildingObj.isInvalidated {
-                                NavigationLink {
-                                    BuildingDetailView(model: .init(building: buildingObj, onUpdate: {}))
-                                } label: {
-                                    BuildingListItemView(building: buildingObj)
-                                        .contextMenu {
-                                            Button {
-                                                model.delete(building: buildingObj)
-                                            } label: {
-                                                Label("Delete", systemImage: "trash.fill")
-                                            }
-                                        }
-                                }
-                            }
-                        }
-                    }
-                    
-                    if model.residents.favorites().count > 0 {
-                        Section("Favorites") {
-                            ForEach(model.residents.favorites()) { obj in
-                                NavigationLink {
-                                    ResidentDetails(model: .init(resident: obj))
-                                } label: {
-                                    ResidentListItemView(resident: obj).contextMenu {
-                                        Button {
-                                            let realm = try! Realm()
-                                            try! realm.write {
-                                                obj.thaw()?.isFavorite.toggle()
-                                            }
-                                        } label: {
-                                            if obj.isFavorite {
-                                                Label("Remove from Favorites", systemImage: "heart.fill")
-                                            } else {
-                                                Label("Add to Favorites", systemImage: "heart")
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        Section("Favorites") {
-                            Text("Favorite residents list is empty.").foregroundStyle(Color.gray)
-                        }
-                    }
-                    
-                    
-                }
-                
-            }
-            .navigationTitle("Buidlings")
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
+                Section {
                     Button {
                         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
                         model.createBuilding()
                         self.showToast.toggle()
                     } label: {
-                        Label("Add new", systemImage: "plus.circle.fill")
+                        Label("Add building", systemImage: "plus.circle.fill")
+                    }
+                }
+                
+                Section  {
+                    
+                    ForEach($model.buildings, id: \.id) { $obj in
+                        NavigationLink {
+                            BuildingDetailView(model: .init(building: obj, onUpdate: {}))
+                        } label: {
+                            BuildingListItemView(model: .init(buildingID: $obj.id), building: $obj)
+                                .contextMenu {
+                                    Button {
+                                        model.delete(building: obj)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash.fill")
+                                    }
+                                }
+                        }
+                    }
+                } header: {
+                    HStack (spacing: 10) {
+                        Image(systemName: "person.2.fill").imageScale(.small)
+                        Text("TOTAL: \(model.users) / \(model.maxUsers)")
+                        Spacer()
                     }
                 }
             }
-            .onAppear {
-                model.update()
+            .navigationTitle("New Green Home")
+            .refreshable {
+                model.fetch()
             }
-        }.searchable(text: $model.searchText, isPresented: $searchIsActive, placement: .navigationBarDrawer)
-        
-            .onReceive(model.$searchText.debounce(for: .seconds(1), scheduler: DispatchQueue.main)) {
-                model.search($0)
-            }
-            .toast(isPresenting: $showToast){
-                AlertToast(type: .regular, title: "New building created")
-            }
+        }
+        .toast(isPresenting: $showToast){
+            AlertToast(type: .regular, title: "New building created")
+        }
         
     }
 }

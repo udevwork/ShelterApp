@@ -22,14 +22,20 @@ struct CreateNewRemoteUserView: View {
     @State var alertText = ""
     @State var toast = false
     
+    @State var showUserEditor: Bool? = nil
+    @State var newUser: Remote.User? = nil
+    
+    var onUserCreate: (Remote.User)->()
+    
     var body: some View {
         NavigationStack {
             List {
-                
                 Section {
                     HStack {
                         Image(systemName: "envelope.fill")
                         TextField("Email", text: $email)
+                            .autocapitalization(.none)
+                            .keyboardType(.emailAddress)
                     }
                     HStack {
                         Image(systemName: "lock.fill")
@@ -38,15 +44,19 @@ struct CreateNewRemoteUserView: View {
                 } footer: {
                     Text("Account credentials")
                 }
-                
-                
+
                 Section {
                     Button(action: create) {
                         Label("Create account", systemImage: "person.crop.circle.badge.plus.fill")
                     }
                 }
-                
-            }.navigationTitle("Create account")
+            }
+            .navigationTitle("Create account")
+            .navigationDestination(item: $showUserEditor) { h in
+                if let user = self.newUser {
+                    ResidentProfileView(model: .init(user: user), editble: true)
+                }
+            }
         }
         .toast(isPresenting: $toast) {
             AlertToast(displayMode: .alert, type: .regular, title: self.alertText)
@@ -59,27 +69,28 @@ struct CreateNewRemoteUserView: View {
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
             if error != nil {
-                print(error?.localizedDescription ?? "")
+                print(error?.localizedDescription ?? "Error")
             } else {
+                guard let id = result?.user.uid else { return }
                 
-                let db = Firestore.firestore()
-                let customDocumentID = result?.user.uid ?? "nouuidfromuser"
-                let documentReference = db.collection("Users").document(customDocumentID)
-
-                documentReference.setData([
-                    "id": result?.user.uid ?? "",
-                    "userName": "New",
-                    "admin": false
-                ]) { err in
+                let newUser = Remote.User(id: id)
+                newUser.isAdmin = false
+                newUser.userName = "New user"
+                newUser.email = email
+                newUser.password = password
+                
+                let documentReference = Fire.base.users.document(id)
+                
+                documentReference.setData(newUser.toDictionary()) { err in
                     if let err = err {
                         print("Ошибка при добавлении документа: \(err)")
                         self.alertText = "Error"
                         self.toast.toggle()
                     } else {
+                        self.newUser = newUser
                         loginBack()
-                        print("Документ успешно добавлен с кастомным ID: \(customDocumentID)")
-                        
-                
+                        onUserCreate(newUser)
+                        print("Документ успешно добавлен с кастомным ID: \(id)")
                     }
                 }
             }
@@ -90,7 +101,7 @@ struct CreateNewRemoteUserView: View {
         let defaults = UserDefaults.standard
         let email = defaults.string(forKey: "lastEmail") ?? ""
         let password = defaults.string(forKey: "lastPassword") ?? ""
-        print(email, password, "Logged ad admin back")
+        print(email, password, "Logged as admin back")
         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
@@ -103,6 +114,7 @@ struct CreateNewRemoteUserView: View {
                 self.alertText = "Success"
                 self.toast.toggle()
                 user.isLogged = true
+                self.showUserEditor = true
             }
         }
     }

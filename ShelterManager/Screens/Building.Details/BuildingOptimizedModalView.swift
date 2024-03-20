@@ -18,7 +18,7 @@ struct BuildingOptimizedModalView: View {
             Section {
                 Button {
                     let pasteboard = UIPasteboard.general
-                    var data = results.joined(separator: "\n")
+                    let data = results.joined(separator: "\n")
                     pasteboard.string = data
                 } label: {
                     Text("Copy text")

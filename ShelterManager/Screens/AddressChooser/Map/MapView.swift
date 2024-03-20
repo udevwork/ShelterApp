@@ -12,12 +12,9 @@ struct MapView: View {
     
     @StateObject private var viewModel = MapViewModel()
 
-    private let address: Address
+    var address: Remote.Address?
     
-    init(address: Address) {
-        self.address = address
-    }
-    
+ 
     var body: some View {
         Map(
             coordinateRegion: $viewModel.region,
@@ -27,7 +24,9 @@ struct MapView: View {
             }
         )
         .onAppear {
-            self.viewModel.getPlace(from: address)
+            if let address = address {
+                self.viewModel.getPlace(from: address)
+            }
         }
         .edgesIgnoringSafeArea(.all)
     }

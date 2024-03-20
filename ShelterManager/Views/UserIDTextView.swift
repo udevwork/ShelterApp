@@ -9,11 +9,12 @@ import SwiftUI
 
 struct UserIDTextView: View {
     var id: String? = nil
+    var alignment: TextAlignment = .center
     var body: some View {
         Text(id ?? (UserEnv.current?.uid ?? "-"))
             .frame(maxWidth: .infinity)
-            .multilineTextAlignment(.center)
-            .font(.footnote)
+            .multilineTextAlignment(alignment)
+            .font(.system(size: 9))
             .listRowBackground(Color.clear)
             .foregroundStyle(Color.gray)
     }

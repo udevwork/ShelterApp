@@ -13,7 +13,7 @@ class MapViewModel: ObservableObject {
     @Published var region = MKCoordinateRegion()
     @Published var annotationItems: [AnnotationItem] = []
     
-    func getPlace(from address: Address) {
+    func getPlace(from address: Remote.Address) {
         let request = MKLocalSearch.Request()
         let title = address.title
         let subTitle = address.subtitle

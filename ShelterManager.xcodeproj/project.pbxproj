@@ -7,10 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		92075DC92B9DDD85000635F0 /* DocumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92075DC82B9DDD85000635F0 /* DocumentsView.swift */; };
+		92075DCC2B9DF35A000635F0 /* PhotoGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92075DCB2B9DF35A000635F0 /* PhotoGalleryView.swift */; };
 		920974C12B86546A004DA79A /* AlertEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920974C02B86546A004DA79A /* AlertEnv.swift */; };
 		92411FF82B88CD7F00662791 /* RealmBackgroundHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92411FF72B88CD7F00662791 /* RealmBackgroundHelper.swift */; };
 		9265969B2B8B912B001E8922 /* CreateNewRemoteUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9265969A2B8B912B001E8922 /* CreateNewRemoteUserView.swift */; };
 		9270B6EB2B874C8E0003C7DE /* UserIDTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9270B6EA2B874C8E0003C7DE /* UserIDTextView.swift */; };
+		927257AF2BA715AC0073A513 /* UserNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927257AE2BA715AC0073A513 /* UserNotesView.swift */; };
+		927257B12BA71C340073A513 /* RemoteNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927257B02BA71C340073A513 /* RemoteNote.swift */; };
+		927602E32B9F5F820044FC41 /* FullScreenImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927602E22B9F5F820044FC41 /* FullScreenImageView.swift */; };
+		92B695C32BA9E88600ADED43 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 92B695C22BA9E88600ADED43 /* Localizable.xcstrings */; };
 		92C3892F2B7BD68600FE69EB /* ShelterManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3892E2B7BD68600FE69EB /* ShelterManagerApp.swift */; };
 		92C389312B7BD68600FE69EB /* BuildingsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389302B7BD68600FE69EB /* BuildingsListView.swift */; };
 		92C389332B7BD68900FE69EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92C389322B7BD68900FE69EB /* Assets.xcassets */; };
@@ -21,20 +27,17 @@
 		92C389482B7C10D700FE69EB /* BuildingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389472B7C10D700FE69EB /* BuildingDetailView.swift */; };
 		92C3894A2B7C188F00FE69EB /* LivingSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389492B7C188F00FE69EB /* LivingSpace.swift */; };
 		92C3894C2B7C18A500FE69EB /* Resident.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3894B2B7C18A500FE69EB /* Resident.swift */; };
-		92C3894E2B7C190C00FE69EB /* Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3894D2B7C190C00FE69EB /* Mock.swift */; };
 		92C389512B7CA12900FE69EB /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 92C389502B7CA12900FE69EB /* Realm */; };
 		92C389532B7CA12900FE69EB /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 92C389522B7CA12900FE69EB /* RealmSwift */; };
-		92C389562B7CDDED00FE69EB /* DebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389552B7CDDED00FE69EB /* DebugView.swift */; };
 		92C389582B7CEAF900FE69EB /* LivingSpaceListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389572B7CEAF900FE69EB /* LivingSpaceListItem.swift */; };
 		92C3895A2B7CF2A400FE69EB /* ResidentListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389592B7CF2A400FE69EB /* ResidentListItemView.swift */; };
 		92C3895E2B7D085100FE69EB /* LivingSpaceDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3895D2B7D085100FE69EB /* LivingSpaceDetails.swift */; };
 		92C389602B7D085E00FE69EB /* ResidentDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3895F2B7D085E00FE69EB /* ResidentDetails.swift */; };
-		92C389632B7D2E8800FE69EB /* LivingSpaceListModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389622B7D2E8800FE69EB /* LivingSpaceListModalView.swift */; };
 		92C389712B7E493E00FE69EB /* AnnotationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389672B7E493E00FE69EB /* AnnotationItem.swift */; };
 		92C389722B7E493E00FE69EB /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389692B7E493E00FE69EB /* ContentViewModel.swift */; };
 		92C389732B7E493E00FE69EB /* ClearButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3896A2B7E493E00FE69EB /* ClearButton.swift */; };
 		92C389742B7E493E00FE69EB /* AddressAutocompleteModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3896B2B7E493E00FE69EB /* AddressAutocompleteModalView.swift */; };
-		92C389752B7E493E00FE69EB /* AddressRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3896C2B7E493E00FE69EB /* AddressRow.swift */; };
+		92C389752B7E493E00FE69EB /* AddressListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3896C2B7E493E00FE69EB /* AddressListItemView.swift */; };
 		92C389762B7E493E00FE69EB /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3896E2B7E493E00FE69EB /* MapView.swift */; };
 		92C389772B7E493E00FE69EB /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C3896F2B7E493E00FE69EB /* MapViewModel.swift */; };
 		92C389792B80E4EA00FE69EB /* InAppClipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389782B80E4EA00FE69EB /* InAppClipboard.swift */; };
@@ -59,14 +62,33 @@
 		92C389A62B862B2C00FE69EB /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 92C389A52B862B2C00FE69EB /* FirebaseStorage */; };
 		92C389A92B862CFC00FE69EB /* PDFViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389A82B862CFC00FE69EB /* PDFViewer.swift */; };
 		92C389AB2B862F5300FE69EB /* DocumentPickerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389AA2B862F5300FE69EB /* DocumentPickerRepresentable.swift */; };
+		92F0EFBB2B99F94500F9BA51 /* RemoteUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFBA2B99F94500F9BA51 /* RemoteUser.swift */; };
+		92F0EFBD2B99F98B00F9BA51 /* RemoteBuilding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFBC2B99F98B00F9BA51 /* RemoteBuilding.swift */; };
+		92F0EFBF2B99F99300F9BA51 /* RemoteAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFBE2B99F99300F9BA51 /* RemoteAddress.swift */; };
+		92F0EFC12B99F99F00F9BA51 /* RemoteLivingSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFC02B99F99F00F9BA51 /* RemoteLivingSpace.swift */; };
+		92F0EFC42B9A16BB00F9BA51 /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = 92F0EFC32B9A16BB00F9BA51 /* SkeletonUI */; };
+		92F0EFC62B9A1C5900F9BA51 /* RemoteNamespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFC52B9A1C5900F9BA51 /* RemoteNamespace.swift */; };
+		92F0EFC82B9B042400F9BA51 /* Firestore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFC72B9B042400F9BA51 /* Firestore.swift */; };
+		92F0EFCB2B9B35B100F9BA51 /* ResidentRemoteListSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFCA2B9B35B100F9BA51 /* ResidentRemoteListSelectionView.swift */; };
+		92F0EFCE2B9CB9CC00F9BA51 /* PhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFCD2B9CB9CC00F9BA51 /* PhotoPickerView.swift */; };
+		92F0EFD12B9CC8EB00F9BA51 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 92F0EFD02B9CC8EB00F9BA51 /* Kingfisher */; };
+		92F0EFD32B9CD8CC00F9BA51 /* FullScreenImageModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFD22B9CD8CC00F9BA51 /* FullScreenImageModifier.swift */; };
+		92FCC26E2BA095BB0065B121 /* TextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92FCC26D2BA095BB0065B121 /* TextInput.swift */; };
+		92FCC2702BA1F0B00065B121 /* PhotoUploaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92FCC26F2BA1F0B00065B121 /* PhotoUploaderManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		92075DC82B9DDD85000635F0 /* DocumentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsView.swift; sourceTree = "<group>"; };
+		92075DCB2B9DF35A000635F0 /* PhotoGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGalleryView.swift; sourceTree = "<group>"; };
 		920974C02B86546A004DA79A /* AlertEnv.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertEnv.swift; sourceTree = "<group>"; };
 		92411FF72B88CD7F00662791 /* RealmBackgroundHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmBackgroundHelper.swift; sourceTree = "<group>"; };
 		9265969A2B8B912B001E8922 /* CreateNewRemoteUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewRemoteUserView.swift; sourceTree = "<group>"; };
 		9270B6EA2B874C8E0003C7DE /* UserIDTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIDTextView.swift; sourceTree = "<group>"; };
 		9270B6EC2B876F120003C7DE /* ShelterManager.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShelterManager.entitlements; sourceTree = "<group>"; };
+		927257AE2BA715AC0073A513 /* UserNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotesView.swift; sourceTree = "<group>"; };
+		927257B02BA71C340073A513 /* RemoteNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteNote.swift; sourceTree = "<group>"; };
+		927602E22B9F5F820044FC41 /* FullScreenImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageView.swift; sourceTree = "<group>"; };
+		92B695C22BA9E88600ADED43 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		92C3892B2B7BD68600FE69EB /* ShelterManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShelterManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92C3892E2B7BD68600FE69EB /* ShelterManagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelterManagerApp.swift; sourceTree = "<group>"; };
 		92C389302B7BD68600FE69EB /* BuildingsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingsListView.swift; sourceTree = "<group>"; };
@@ -78,18 +100,15 @@
 		92C389472B7C10D700FE69EB /* BuildingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingDetailView.swift; sourceTree = "<group>"; };
 		92C389492B7C188F00FE69EB /* LivingSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivingSpace.swift; sourceTree = "<group>"; };
 		92C3894B2B7C18A500FE69EB /* Resident.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resident.swift; sourceTree = "<group>"; };
-		92C3894D2B7C190C00FE69EB /* Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mock.swift; sourceTree = "<group>"; };
-		92C389552B7CDDED00FE69EB /* DebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugView.swift; sourceTree = "<group>"; };
 		92C389572B7CEAF900FE69EB /* LivingSpaceListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivingSpaceListItem.swift; sourceTree = "<group>"; };
 		92C389592B7CF2A400FE69EB /* ResidentListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResidentListItemView.swift; sourceTree = "<group>"; };
 		92C3895D2B7D085100FE69EB /* LivingSpaceDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivingSpaceDetails.swift; sourceTree = "<group>"; };
 		92C3895F2B7D085E00FE69EB /* ResidentDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResidentDetails.swift; sourceTree = "<group>"; };
-		92C389622B7D2E8800FE69EB /* LivingSpaceListModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivingSpaceListModalView.swift; sourceTree = "<group>"; };
 		92C389672B7E493E00FE69EB /* AnnotationItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotationItem.swift; sourceTree = "<group>"; };
 		92C389692B7E493E00FE69EB /* ContentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		92C3896A2B7E493E00FE69EB /* ClearButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClearButton.swift; sourceTree = "<group>"; };
 		92C3896B2B7E493E00FE69EB /* AddressAutocompleteModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressAutocompleteModalView.swift; sourceTree = "<group>"; };
-		92C3896C2B7E493E00FE69EB /* AddressRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressRow.swift; sourceTree = "<group>"; };
+		92C3896C2B7E493E00FE69EB /* AddressListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressListItemView.swift; sourceTree = "<group>"; };
 		92C3896E2B7E493E00FE69EB /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		92C3896F2B7E493E00FE69EB /* MapViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		92C389782B80E4EA00FE69EB /* InAppClipboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppClipboard.swift; sourceTree = "<group>"; };
@@ -105,6 +124,17 @@
 		92C389A82B862CFC00FE69EB /* PDFViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewer.swift; sourceTree = "<group>"; };
 		92C389AA2B862F5300FE69EB /* DocumentPickerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPickerRepresentable.swift; sourceTree = "<group>"; };
 		92C389AC2B86327100FE69EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		92F0EFBA2B99F94500F9BA51 /* RemoteUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteUser.swift; sourceTree = "<group>"; };
+		92F0EFBC2B99F98B00F9BA51 /* RemoteBuilding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteBuilding.swift; sourceTree = "<group>"; };
+		92F0EFBE2B99F99300F9BA51 /* RemoteAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteAddress.swift; sourceTree = "<group>"; };
+		92F0EFC02B99F99F00F9BA51 /* RemoteLivingSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteLivingSpace.swift; sourceTree = "<group>"; };
+		92F0EFC52B9A1C5900F9BA51 /* RemoteNamespace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteNamespace.swift; sourceTree = "<group>"; };
+		92F0EFC72B9B042400F9BA51 /* Firestore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firestore.swift; sourceTree = "<group>"; };
+		92F0EFCA2B9B35B100F9BA51 /* ResidentRemoteListSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResidentRemoteListSelectionView.swift; sourceTree = "<group>"; };
+		92F0EFCD2B9CB9CC00F9BA51 /* PhotoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerView.swift; sourceTree = "<group>"; };
+		92F0EFD22B9CD8CC00F9BA51 /* FullScreenImageModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageModifier.swift; sourceTree = "<group>"; };
+		92FCC26D2BA095BB0065B121 /* TextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInput.swift; sourceTree = "<group>"; };
+		92FCC26F2BA1F0B00065B121 /* PhotoUploaderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoUploaderManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +144,8 @@
 			files = (
 				92C3898E2B83672100FE69EB /* FirebaseAppCheck in Frameworks */,
 				92C3898A2B83672100FE69EB /* FirebaseAnalyticsSwift in Frameworks */,
+				92F0EFD12B9CC8EB00F9BA51 /* Kingfisher in Frameworks */,
+				92F0EFC42B9A16BB00F9BA51 /* SkeletonUI in Frameworks */,
 				92C389812B833DF400FE69EB /* AlertToast in Frameworks */,
 				92C389962B838A1200FE69EB /* FirebaseFirestore in Frameworks */,
 				92C389532B7CA12900FE69EB /* RealmSwift in Frameworks */,
@@ -130,9 +162,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		92075DC72B9DDD6F000635F0 /* DocumentsView */ = {
+			isa = PBXGroup;
+			children = (
+				92075DC82B9DDD85000635F0 /* DocumentsView.swift */,
+			);
+			path = DocumentsView;
+			sourceTree = "<group>";
+		};
+		92075DCA2B9DF345000635F0 /* ImageGalleryView */ = {
+			isa = PBXGroup;
+			children = (
+				92075DCB2B9DF35A000635F0 /* PhotoGalleryView.swift */,
+				927602E22B9F5F820044FC41 /* FullScreenImageView.swift */,
+				92FCC26F2BA1F0B00065B121 /* PhotoUploaderManager.swift */,
+			);
+			path = ImageGalleryView;
+			sourceTree = "<group>";
+		};
+		927257AD2BA715780073A513 /* UserNotesView */ = {
+			isa = PBXGroup;
+			children = (
+				927257AE2BA715AC0073A513 /* UserNotesView.swift */,
+			);
+			path = UserNotesView;
+			sourceTree = "<group>";
+		};
 		92C389222B7BD68600FE69EB = {
 			isa = PBXGroup;
 			children = (
+				92B695C22BA9E88600ADED43 /* Localizable.xcstrings */,
 				92C3892D2B7BD68600FE69EB /* ShelterManager */,
 				92C3892C2B7BD68600FE69EB /* Products */,
 				92C389922B836A2400FE69EB /* Frameworks */,
@@ -176,11 +235,15 @@
 		92C3893C2B7BD6BF00FE69EB /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				92075DCA2B9DF345000635F0 /* ImageGalleryView */,
+				92075DC72B9DDD6F000635F0 /* DocumentsView */,
+				92F0EFCC2B9CB9B500F9BA51 /* PhotoPickerView */,
 				92C389A72B862CEE00FE69EB /* PDFViewer */,
 				92C3899E2B84E37D00FE69EB /* Onboarding */,
+				927257AD2BA715780073A513 /* UserNotesView */,
 				92C3898F2B8367AA00FE69EB /* Profile */,
 				92C389642B7E492600FE69EB /* AddressChooser */,
-				92C3895C2B7D07F800FE69EB /* Resepient.Details */,
+				92C3895C2B7D07F800FE69EB /* Resident.Details */,
 				92C3895B2B7D07E200FE69EB /* LivingSpace.Details */,
 				92C389462B7C10B500FE69EB /* Building.Details */,
 				92C3893D2B7BD6CC00FE69EB /* Home.BuildingsList */,
@@ -200,11 +263,8 @@
 		92C3893E2B7BF99A00FE69EB /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
-				92C3893F2B7BF9AF00FE69EB /* Building.swift */,
-				92C389412B7BF9E900FE69EB /* Address.swift */,
-				92C389492B7C188F00FE69EB /* LivingSpace.swift */,
-				92C3894B2B7C18A500FE69EB /* Resident.swift */,
-				92C3894D2B7C190C00FE69EB /* Mock.swift */,
+				92F0EFC92B9B2AE500F9BA51 /* Realm */,
+				92F0EFB92B99F93700F9BA51 /* Remote */,
 			);
 			path = DataStructures;
 			sourceTree = "<group>";
@@ -212,10 +272,13 @@
 		92C389432B7BFACB00FE69EB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				92C3896C2B7E493E00FE69EB /* AddressListItemView.swift */,
 				92C389442B7BFAE200FE69EB /* BuildingListItemView.swift */,
 				92C389572B7CEAF900FE69EB /* LivingSpaceListItem.swift */,
 				92C389592B7CF2A400FE69EB /* ResidentListItemView.swift */,
 				9270B6EA2B874C8E0003C7DE /* UserIDTextView.swift */,
+				92F0EFD22B9CD8CC00F9BA51 /* FullScreenImageModifier.swift */,
+				92FCC26D2BA095BB0065B121 /* TextInput.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -232,7 +295,6 @@
 		92C389542B7CDDDA00FE69EB /* Debug */ = {
 			isa = PBXGroup;
 			children = (
-				92C389552B7CDDED00FE69EB /* DebugView.swift */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -241,18 +303,18 @@
 			isa = PBXGroup;
 			children = (
 				92C3895D2B7D085100FE69EB /* LivingSpaceDetails.swift */,
-				92C389622B7D2E8800FE69EB /* LivingSpaceListModalView.swift */,
 			);
 			path = LivingSpace.Details;
 			sourceTree = "<group>";
 		};
-		92C3895C2B7D07F800FE69EB /* Resepient.Details */ = {
+		92C3895C2B7D07F800FE69EB /* Resident.Details */ = {
 			isa = PBXGroup;
 			children = (
 				92C3895F2B7D085E00FE69EB /* ResidentDetails.swift */,
 				92C389A32B860BCB00FE69EB /* ResidentsRemoteList.swift */,
+				92F0EFCA2B9B35B100F9BA51 /* ResidentRemoteListSelectionView.swift */,
 			);
-			path = Resepient.Details;
+			path = Resident.Details;
 			sourceTree = "<group>";
 		};
 		92C389642B7E492600FE69EB /* AddressChooser */ = {
@@ -279,7 +341,6 @@
 				92C389692B7E493E00FE69EB /* ContentViewModel.swift */,
 				92C3896A2B7E493E00FE69EB /* ClearButton.swift */,
 				92C3896B2B7E493E00FE69EB /* AddressAutocompleteModalView.swift */,
-				92C3896C2B7E493E00FE69EB /* AddressRow.swift */,
 			);
 			path = Content;
 			sourceTree = "<group>";
@@ -298,6 +359,7 @@
 			children = (
 				92C3897B2B8230CB00FE69EB /* FlatsOptimizer.swift */,
 				92411FF72B88CD7F00662791 /* RealmBackgroundHelper.swift */,
+				92F0EFC72B9B042400F9BA51 /* Firestore.swift */,
 			);
 			path = BuisnessLogic;
 			sourceTree = "<group>";
@@ -347,6 +409,38 @@
 			path = PDFViewer;
 			sourceTree = "<group>";
 		};
+		92F0EFB92B99F93700F9BA51 /* Remote */ = {
+			isa = PBXGroup;
+			children = (
+				92F0EFBA2B99F94500F9BA51 /* RemoteUser.swift */,
+				92F0EFBC2B99F98B00F9BA51 /* RemoteBuilding.swift */,
+				92F0EFBE2B99F99300F9BA51 /* RemoteAddress.swift */,
+				92F0EFC02B99F99F00F9BA51 /* RemoteLivingSpace.swift */,
+				92F0EFC52B9A1C5900F9BA51 /* RemoteNamespace.swift */,
+				927257B02BA71C340073A513 /* RemoteNote.swift */,
+			);
+			path = Remote;
+			sourceTree = "<group>";
+		};
+		92F0EFC92B9B2AE500F9BA51 /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				92C3893F2B7BF9AF00FE69EB /* Building.swift */,
+				92C389412B7BF9E900FE69EB /* Address.swift */,
+				92C389492B7C188F00FE69EB /* LivingSpace.swift */,
+				92C3894B2B7C18A500FE69EB /* Resident.swift */,
+			);
+			path = Realm;
+			sourceTree = "<group>";
+		};
+		92F0EFCC2B9CB9B500F9BA51 /* PhotoPickerView */ = {
+			isa = PBXGroup;
+			children = (
+				92F0EFCD2B9CB9CC00F9BA51 /* PhotoPickerView.swift */,
+			);
+			path = PhotoPickerView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -376,6 +470,8 @@
 				92C389952B838A1200FE69EB /* FirebaseFirestore */,
 				92C389972B838A1200FE69EB /* FirebaseFirestoreSwift */,
 				92C389A52B862B2C00FE69EB /* FirebaseStorage */,
+				92F0EFC32B9A16BB00F9BA51 /* SkeletonUI */,
+				92F0EFD02B9CC8EB00F9BA51 /* Kingfisher */,
 			);
 			productName = ShelterManager;
 			productReference = 92C3892B2B7BD68600FE69EB /* ShelterManager.app */;
@@ -403,12 +499,15 @@
 			knownRegions = (
 				en,
 				Base,
+				de,
 			);
 			mainGroup = 92C389222B7BD68600FE69EB;
 			packageReferences = (
 				92C3894F2B7CA12900FE69EB /* XCRemoteSwiftPackageReference "realm-swift" */,
 				92C3897F2B833DF400FE69EB /* XCRemoteSwiftPackageReference "AlertToast" */,
 				92C389842B83672100FE69EB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				92F0EFC22B9A16BB00F9BA51 /* XCRemoteSwiftPackageReference "SkeletonUI" */,
+				92F0EFCF2B9CC8EB00F9BA51 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 92C3892C2B7BD68600FE69EB /* Products */;
 			projectDirPath = "";
@@ -426,6 +525,7 @@
 			files = (
 				92C389362B7BD68900FE69EB /* Preview Assets.xcassets in Resources */,
 				92C389832B83659900FE69EB /* GoogleService-Info.plist in Resources */,
+				92B695C32BA9E88600ADED43 /* Localizable.xcstrings in Resources */,
 				92C389332B7BD68900FE69EB /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -438,31 +538,43 @@
 			buildActionMask = 2147483647;
 			files = (
 				920974C12B86546A004DA79A /* AlertEnv.swift in Sources */,
+				92075DC92B9DDD85000635F0 /* DocumentsView.swift in Sources */,
 				92C389312B7BD68600FE69EB /* BuildingsListView.swift in Sources */,
+				92F0EFBB2B99F94500F9BA51 /* RemoteUser.swift in Sources */,
 				92C389AB2B862F5300FE69EB /* DocumentPickerRepresentable.swift in Sources */,
+				92F0EFD32B9CD8CC00F9BA51 /* FullScreenImageModifier.swift in Sources */,
 				9265969B2B8B912B001E8922 /* CreateNewRemoteUserView.swift in Sources */,
 				92C3894C2B7C18A500FE69EB /* Resident.swift in Sources */,
 				92C389A22B8605BB00FE69EB /* AdministratorProfileView.swift in Sources */,
+				92F0EFCB2B9B35B100F9BA51 /* ResidentRemoteListSelectionView.swift in Sources */,
 				92C389602B7D085E00FE69EB /* ResidentDetails.swift in Sources */,
 				92C389912B8367F600FE69EB /* SignInView.swift in Sources */,
 				92411FF82B88CD7F00662791 /* RealmBackgroundHelper.swift in Sources */,
 				92C389762B7E493E00FE69EB /* MapView.swift in Sources */,
 				92C3894A2B7C188F00FE69EB /* LivingSpace.swift in Sources */,
+				92075DCC2B9DF35A000635F0 /* PhotoGalleryView.swift in Sources */,
 				92C3899B2B83A2F100FE69EB /* UserEnv.swift in Sources */,
 				92C389402B7BF9AF00FE69EB /* Building.swift in Sources */,
 				92C389742B7E493E00FE69EB /* AddressAutocompleteModalView.swift in Sources */,
 				92C3895E2B7D085100FE69EB /* LivingSpaceDetails.swift in Sources */,
-				92C389752B7E493E00FE69EB /* AddressRow.swift in Sources */,
+				92C389752B7E493E00FE69EB /* AddressListItemView.swift in Sources */,
+				927602E32B9F5F820044FC41 /* FullScreenImageView.swift in Sources */,
+				92F0EFC82B9B042400F9BA51 /* Firestore.swift in Sources */,
+				92F0EFCE2B9CB9CC00F9BA51 /* PhotoPickerView.swift in Sources */,
 				92C389712B7E493E00FE69EB /* AnnotationItem.swift in Sources */,
 				92C3899D2B83A63D00FE69EB /* ResidentProfileView.swift in Sources */,
 				92C389772B7E493E00FE69EB /* MapViewModel.swift in Sources */,
+				92F0EFC62B9A1C5900F9BA51 /* RemoteNamespace.swift in Sources */,
 				92C389422B7BF9E900FE69EB /* Address.swift in Sources */,
+				927257B12BA71C340073A513 /* RemoteNote.swift in Sources */,
 				92C389582B7CEAF900FE69EB /* LivingSpaceListItem.swift in Sources */,
 				92C389A42B860BCB00FE69EB /* ResidentsRemoteList.swift in Sources */,
-				92C389632B7D2E8800FE69EB /* LivingSpaceListModalView.swift in Sources */,
+				92F0EFBD2B99F98B00F9BA51 /* RemoteBuilding.swift in Sources */,
+				92F0EFBF2B99F99300F9BA51 /* RemoteAddress.swift in Sources */,
+				92FCC2702BA1F0B00065B121 /* PhotoUploaderManager.swift in Sources */,
+				92FCC26E2BA095BB0065B121 /* TextInput.swift in Sources */,
 				9270B6EB2B874C8E0003C7DE /* UserIDTextView.swift in Sources */,
 				92C389482B7C10D700FE69EB /* BuildingDetailView.swift in Sources */,
-				92C389562B7CDDED00FE69EB /* DebugView.swift in Sources */,
 				92C389452B7BFAE200FE69EB /* BuildingListItemView.swift in Sources */,
 				92C389A92B862CFC00FE69EB /* PDFViewer.swift in Sources */,
 				92C389732B7E493E00FE69EB /* ClearButton.swift in Sources */,
@@ -471,9 +583,10 @@
 				92C3897C2B8230CB00FE69EB /* FlatsOptimizer.swift in Sources */,
 				92C3897E2B825B6800FE69EB /* BuildingOptimizedModalView.swift in Sources */,
 				92C389A02B84E38C00FE69EB /* LoadingView.swift in Sources */,
+				927257AF2BA715AC0073A513 /* UserNotesView.swift in Sources */,
 				92C3892F2B7BD68600FE69EB /* ShelterManagerApp.swift in Sources */,
-				92C3894E2B7C190C00FE69EB /* Mock.swift in Sources */,
 				92C3895A2B7CF2A400FE69EB /* ResidentListItemView.swift in Sources */,
+				92F0EFC12B99F99F00F9BA51 /* RemoteLivingSpace.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -612,7 +725,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShelterManager/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Shelter;
+				INFOPLIST_KEY_CFBundleDisplayName = "New Green Home";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "Documents uploading";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -646,7 +759,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShelterManager/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Shelter;
+				INFOPLIST_KEY_CFBundleDisplayName = "New Green Home";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "Documents uploading";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -715,6 +828,22 @@
 				minimumVersion = 10.21.0;
 			};
 		};
+		92F0EFC22B9A16BB00F9BA51 /* XCRemoteSwiftPackageReference "SkeletonUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CSolanaM/SkeletonUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.1;
+			};
+		};
+		92F0EFCF2B9CC8EB00F9BA51 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.11.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -777,6 +906,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 92C389842B83672100FE69EB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		92F0EFC32B9A16BB00F9BA51 /* SkeletonUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92F0EFC22B9A16BB00F9BA51 /* XCRemoteSwiftPackageReference "SkeletonUI" */;
+			productName = SkeletonUI;
+		};
+		92F0EFD02B9CC8EB00F9BA51 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92F0EFCF2B9CC8EB00F9BA51 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

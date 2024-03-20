@@ -7,10 +7,19 @@ import AlertToast
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        defSettings()
         FirebaseApp.configure()
         RealmBackgroundHelper().deleteAllMarkedDeletedObjects()
         return true
     }
+    
+    private func defSettings() {
+        UserDefaults.standard.register(defaults: ["buildingPhotoEnabled": true,
+                                                  "buildingDitailPhotoEnabled": true,
+                                                  "userPhotoEnabled": true,
+                                                  "extremeImageCompressionEnabled": true])
+    }
+    
 }
 
 @main
@@ -30,18 +39,17 @@ struct ShelterManagerApp: App {
                         if (user.isAdmin ?? false) {
                             TabView {
                                 BuildingsListView()
-                                    .tabItem { Label("Surface", systemImage: "1.circle.fill") }
-                                BuildingsListView()
-                                    .tabItem { Label("Surface", systemImage: "2.circle.fill") }
+                                    .tabItem { Label("Buildings", systemImage: "building.2.fill") }
+                                ResidentsRemoteList(model: .init())
+                                    .tabItem { Label("Users", systemImage: "person.2.fill") }
                                 AdministratorProfileView()
-                                    .tabItem { Label("Admin panel", systemImage: "person.crop.circle.fill") }
-                               
+                                    .tabItem { Label("Admin panel", systemImage: "wrench.and.screwdriver.fill") }
                             }
                             .environmentObject(clipBoard)
                             .environmentObject(user)
                         } else {
-                            ResidentProfileView(model: ResidentProfileModel(userID: UserEnv.current!.uid))
-                            .environmentObject(user)
+                            ResidentProfileView( model: .init(userID: UserEnv.current!.uid), editble: false)
+                                .environmentObject(user)
                         }
                     } else {
                         SignInView()
@@ -50,8 +58,6 @@ struct ShelterManagerApp: App {
                 } else {
                     LoadingView()
                 }
-            }.toast(isPresenting: $user.isLoading) {
-                AlertToast(type: .loading, title: "Account", subTitle: "Loading")
             }
         }
     }

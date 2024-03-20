@@ -1,35 +1,70 @@
 import SwiftUI
 import RealmSwift
+import Kingfisher
 
-struct ResidentListItemView: View {
-    @ObservedRealmObject var resident: Resident
+class ResidentListItemViewModel: ObservableObject {
     
-    var body: some View {
-            
-            VStack(alignment: .leading) {
-                
-                if resident.isEmpty()  {
-                    Text("New resident")
-                } else {
-                    HStack(spacing: 14) {
-                        Image(systemName: "person.circle.fill").frame(width: 10, height: 10, alignment: .center)
-                        Text(resident.fullName()).bold()
-                        if resident.isFavorite {
-                            Image(systemName: "heart.fill").foregroundColor(.red).font(.footnote)
-                        }
-                    }.offset(x: 3)
-                }
-                
-                if let room = resident.livingSpace {
-                    Text("Room № \(room.number) (floor \(room.floor))").font(.footnote).foregroundStyle(.gray)
-                } else {
-                    Text("No livingspace").font(.footnote).foregroundStyle(.gray)
+    var photo: PhotoUploaderManager
+    @Published var url: URL? = nil
+    
+    init(residentID: String) {
+        self.photo = PhotoUploaderManager(id: residentID)
+        if UserDefaults.standard.bool(forKey: "userPhotoEnabled") {
+            Task {
+                let tempurl = try await photo.loadAvatar()
+                DispatchQueue.main.async {
+                    self.url = tempurl
                 }
             }
-        
+        }
     }
 }
 
-#Preview {
-    ResidentListItemView(resident: .init(firstName: "Denis", secondName: "Kotelnikov"))
+struct ResidentListItemView: View {
+    
+    @ObservedObject var model: ResidentListItemViewModel
+    @State var resident: Remote.User
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            if resident.isEmpty()  {
+                Text("New resident")
+            } else {
+                HStack(spacing: 14) {
+                    
+                    if UserDefaults.standard.bool(forKey: "userPhotoEnabled") {
+                        KFImage.url(model.url)
+                            .placeholder({  Image(systemName: "person.circle.fill") })
+                            .loadDiskFileSynchronously()
+                            .cacheMemoryOnly()
+                            .fade(duration: 0.25)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 30, height: 30)
+                            .cornerRadius(15)
+                    } else {
+                        Image(systemName: "person.circle.fill")
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text(resident.fullName()).bold()
+                        HStack {
+                            if let top = resident.shortLivingSpaceLabel, !top.isEmpty {
+                                Text(top)
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
+                            if let shortAddressLabel = resident.shortAddressLabel, !shortAddressLabel.isEmpty {
+                                Text(shortAddressLabel)
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

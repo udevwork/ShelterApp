@@ -10,19 +10,17 @@ import RealmSwift
 
 class RealmBackgroundHelper {
     func deleteAllMarkedDeletedObjects() {
+        let tempFolderPath = NSTemporaryDirectory()
+        let fileManager = FileManager.default
         do {
-            let realm = try Realm() // Безопасное получение экземпляра Realm
-            
-            // Находим все объекты, которые нужно удалить.
-            let objectsToDelete = realm.objects(Building.self).filter("deleted == true")
-
-            try realm.write {
-                // Удаляем объекты.
-                realm.delete(objectsToDelete)
+            let tempFiles = try fileManager.contentsOfDirectory(atPath: tempFolderPath)
+            for file in tempFiles {
+                let filePath = (tempFolderPath as NSString).appendingPathComponent(file)
+                try fileManager.removeItem(atPath: filePath)
             }
-            print("Все обьекты удалены")
+            print("Временная директория очищена.")
         } catch {
-            print("Ошибка при работе с базой данных Realm: \(error)")
+            print("Ошибка при очистке временной директории: \(error)")
         }
     }
 }

@@ -40,22 +40,6 @@ struct ResidentDetails: View {
                     TextField("Name", text: $model.resident.secondName)
                 }
             }
-            
-            Section("Living place") {
-                if let shortAddress = model.resident.assignee.first?.address?.fullAddress() {
-                    Text(shortAddress).font(.footnote)
-                }
-                Button(action: {
-                    showingSheet.toggle()
-                }, label: {
-                    if let room = model.resident.livingSpace {
-                        LivingSpaceListItem(livingSpace: room)
-                    } else {
-                        Text("Choose living space")
-                    }
-                })
-            }
-            
    
             Section("Data") {
                 Button {
@@ -92,13 +76,12 @@ Room № \(self.model.resident.livingSpace?.number ?? "no livingspace")
         }
         .navigationTitle("Resident")
         .sheet(isPresented: $showingSheet) {
-            LivingSpaceListModalView(resident: model.resident, onUpdate: {
-                model.update()
-            })
+           
         }
         .toast(isPresenting: $showAlert) {
             AlertToast(displayMode: .alert, type: .complete(.green))
         }
+        .scrollDismissesKeyboard(.interactively)
     }
 }
 

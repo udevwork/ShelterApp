@@ -10,130 +10,138 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
 import AlertToast
+import PhotosUI
+import UIKit
+import Kingfisher
 
 class ResidentProfileModel: ObservableObject {
-
-    @Published var user: RemoteUser = RemoteUser()
-    @Published var listOfFiles: [StorageReference] = []
-    @Published var showPDFViewes: Bool = false
+    
+    @Published var user: Remote.User = Remote.User()
+    
+    @Published var livingSpace: Remote.LivingSpace? = nil
+    @Published var address: Remote.Address? = nil
+    
+    @Published var avatarUrl: URL? = nil
     
     // alerts
     @Published var showLoadingAlert: Bool = false
     @Published var showErrorAlert: Bool = false
     var errorAlertText: String = ""
     
-    var pdfUrlToView: URL? = nil
+    @Published var fullSizeImage: URL? = nil
+    @Published var isShowingFullScreen = false
+    var photoManager: PhotoUploaderManager
     
-    init(user: RemoteUser) {
+    init(user: Remote.User) {
         self.user = user
+        photoManager = PhotoUploaderManager(id: user.id)
+        fetchLinkedUserDate()
     }
     
     init(userID: String) {
         showLoadingAlert = true
-        let db = Firestore.firestore()
-        let path = db.collection("Users").document(userID)
+        photoManager = PhotoUploaderManager(id: userID)
+        let path = Fire.base.users.document(userID)
         path.getDocument { snap, error in
             if let error = error {
                 print("Ошибка при получении пользователей: \(error.localizedDescription)")
             } else {
                 do {
-                    self.user = try snap!.data(as: RemoteUser.self)
+                    if let snap = snap {
+                        self.user = try snap.decode()
+                        self.fetchLinkedUserDate()
+                    } else {
+                        try? Auth.auth().signOut()
+                    }
                 } catch let error {
                     print(error.localizedDescription)
                     try? Auth.auth().signOut()
                 }
             }
         }
+       
+    }
+    
+    func fetchLinkedUserDate() {
+        Task {
+            if let id = user.linkedLivingspaceID, id.isEmpty == false {
+                let ref = Fire.base.livingSpaces.document(id)
+                if let doc = try? await ref.getDocument() {
+                    livingSpace = try doc.decode()
+                }
+            }
+            
+            if let id = user.linkedAddressID, id.isEmpty == false {
+                let ref = Fire.base.addresses.document(id)
+                
+                if let doc = try? await ref.getDocument() {
+                    address = try doc.decode()
+                    
+                }
+            }
+            DispatchQueue.main.async {
+                self.showLoadingAlert = false
+            }
+        }
     }
     
     func saveData() {
-        // Получаем ссылку на хранилище Firestore
-            let db = Firestore.firestore()
-            
-            // Ссылка на конкретный документ пользователя по ID
-            let id = user.id
-            let userRef = db.collection("Users").document(id)
-            
-            // Создаем словарь из обновленных данных пользователя
-            let updatedUserData: [String: Any] = [
-                "userName": user.userName            
-            ]
-            
-            // Обновляем данные пользователя
-            userRef.updateData(updatedUserData) { error in
-                if let error = error {
-                    print("Ошибка при обновлении пользователя: \(error.localizedDescription)")
-                } else {
-                    print("Данные пользователя успешно обновлены")
-                }
-            }
+        
+        let id = user.id
+        let userRef = Fire.base.users.document(id)
+        
+        let data = user.toDictionary()
+        
+        Task {
+            try? await userRef.setData(data)
+        }
+        
     }
     
-    
-
-    
-    func downloadPdf(storageRef: StorageReference) {
-        showLoadingAlert = true
-        let localURL = FileManager.default.temporaryDirectory.appendingPathComponent(UserEnv.current?.uid ?? "tempfile")
-
-        storageRef.write(toFile: localURL) { url, error in
-            if let error = error {
-              
-            } else if let url = url {
-                self.showLoadingAlert = false
-                self.pdfUrlToView = url
-                self.showPDFViewes.toggle()
-            }
+  
+    func signOut(completion: ()->()) {
+        try? Auth.auth().signOut()
+        if let user = Auth.auth().currentUser {
+            print(user.email!)
+        } else {
+            print("no user")
+            completion()
         }
     }
     
-    func getListOfFiles() {
-        showLoadingAlert = true
-        // Получаем ссылку на хранилище
-        let storageRef = Storage.storage().reference()
-        
-        // Создаем ссылку на директорию, где хранятся PDF-файлы пользователя
-        let userPdfsRef = storageRef.child("pdfs/\(user.id)/")
-        
-        // Получаем список всех файлов в директории
-        userPdfsRef.listAll { (result, error) in
-            if let error = error {
-                print("Ошибка при получении списка файлов: \(error.localizedDescription)")
-                return
-            }
-            self.listOfFiles.removeAll()
-            for item in result!.items {
-                self.listOfFiles.append(item)
-            }
+ 
+    func uploadImage(imageData: Data) {
+        self.showLoadingAlert = true
+        Task {
+            self.avatarUrl = try await photoManager.uploadAvatar(imageData: imageData)
+            self.fullSizeImage = nil
             self.showLoadingAlert = false
-            // Если вам нужно также обработать список поддиректорий, вы можете перебрать result.prefixes
-            //for prefix in result!.prefixes {
-            //  print("Найдена поддиректория: \(prefix)")
-            //}
         }
     }
     
-    func deleteFile(docName: String) {
-        // Получаем ссылку на Storage
-        let storage = Storage.storage()
-        
-        // Создаем ссылку на файл, который хотим удалить
-        let path = "pdfs/\(user.id)/\(docName)"
-        let storageRef = storage.reference(withPath: path)
-        
-        // Удаляем файл
-        storageRef.delete { error in
-            if let error = error {
-                // Обработка ошибки, если файл не удалось удалить
-                print("Error deleting file: \(error.localizedDescription)")
-            } else {
-                // Файл успешно удален
-                print("File successfully deleted")
-                self.getListOfFiles()
+    func getThumbnaliAvatarUrl() {
+        Task {
+            self.avatarUrl = try await photoManager.loadAvatar()
+        }        
+    }
+    
+    func getFullAvatarUrlFrom() {
+        if fullSizeImage != nil {
+            self.isShowingFullScreen = true
+            return
+        }
+        if let url = avatarUrl {
+            self.showLoadingAlert = true
+            Task {
+                self.avatarUrl = try await photoManager.getFullAvatarUrlFrom(url: url)
+                self.fullSizeImage = self.avatarUrl
+                self.showLoadingAlert = false
+                self.isShowingFullScreen = true
             }
         }
     }
     
+  
 }
 
 struct ResidentProfileView: View {
@@ -142,187 +150,189 @@ struct ResidentProfileView: View {
     @EnvironmentObject var userEnv: UserEnv
     @State private var isPickerPresented = false
     @State var showAlert: Bool = false
-
-
+    
+    @State private var avatarItem: PhotosPickerItem?
+    
+    var editble: Bool
+    
     var body: some View {
-        NavigationStack {
-            if model.user.id.isEmpty == false {
-                List {
-                    Section("Person") {
-                        HStack {
-                            Text("Resident name: ").foregroundColor(Color(UIColor.secondaryLabel))
-                            TextField("Name", text: $model.user.userName)
+
+        if model.user.id.isEmpty == false {
+            List {
+                HStack(alignment: .center) {
+                    Spacer()
+                    HStack (alignment: .center, spacing: 20) {
+                        
+                        KFImage.url(model.avatarUrl)
+                            .placeholder({ Image("default-avatar") })
+                            .loadDiskFileSynchronously()
+                            .cacheMemoryOnly()
+                            .fade(duration: 0.25)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(50)
+                            .onTapGesture {
+                                self.model.getFullAvatarUrlFrom()
+                            }
+                        
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(model.user.userName).font(.title3).bold()
+                            Text(model.user.id)
+                                .multilineTextAlignment(.leading)
+                                .font(.system(size: 10))
+                                .foregroundStyle(Color.gray)
                         }
-                     
+                    }
+                    Spacer()
+                }.listRowBackground(Color.clear)
+                
+                Section("Address") {
+                    VStack(alignment: .leading, spacing: 12) {
+                        AddressListItemView(address: model.address)
+                        LivingSpaceListItem(livingSpace: model.livingSpace)
+                    }
+                }
+                
+                Section("Person") {
+                    
+                    TextInput(text: $model.user.userName,
+                              title: "Name: ",
+                              systemImage: "pencil").disabled(!editble)
+                   
+                    
+                    TextInput(text: $model.user.socialSecurityNumber,
+                              title: "Security №: ",
+                              systemImage: "exclamationmark.shield.fill").disabled(!editble)
+          
+                    TextInput(text: $model.user.mobilePhone,
+                              title: "Phone: ",
+                              systemImage: "phone.fill").disabled(!editble)
+                    
+                    
+                    
+                    //  Text("Date is \(birthDate.formatted(date: .long, time: .omitted))")
+                    if editble {
+                        HStack {
+                            Image(systemName: "birthday.cake.fill")
+                            DatePicker(selection: $model.user.dateOfBirth, in: ...Date.now, displayedComponents: .date) {
+                                Text("Birthday")
+                            }
+                        }
+                    } else {
+                        HStack {
+                            Image(systemName: "birthday.cake.fill")
+                            Text("Birthday is \(model.user.dateOfBirth.formatted(date: .long, time: .omitted))")
+                           
+                        }
+                    }
+                    
+                    if editble {
                         Button {
                             model.saveData()
                             UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
                             self.showAlert.toggle()
                         } label: {
-                            Label("Save", systemImage: "icloud.and.arrow.up")
+                            Label("Save", systemImage: "icloud.and.arrow.up.fill")
                         }
-                        
                     }
-                    
-                    Section("Documents") {
-                        
-                        ForEach(model.listOfFiles, id: \.self) { item in
-                            
-                            Button {
-                                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                                self.model.downloadPdf(storageRef: item)
-                            } label: {
-                                HStack {
-                                    Image(systemName: "doc.fill").foregroundColor(Color(UIColor.secondaryLabel))
-                                    Text(item.name).foregroundColor(Color(UIColor.label))
-                                }.contextMenu {
-                                    Button {
-                                        model.deleteFile(docName: item.name)
-                                    } label: {
-                                        Label("Delete", systemImage: "trash.fill")
-                                    }
-
-                                }
-                            }
-                        }
-                        
-                        Button {
-                      
-                            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                            isPickerPresented = true
+                }
+                if editble {
+                    Section("Files") {
+                        NavigationLink {
+                            DocumentsView(model: .init(id: model.user.id), editble: editble)
                         } label: {
-                            HStack {
-                                Label("Upload pdf file", systemImage: "plus.circle.fill")
-                            }
-                        }
+                            Label("Documents", systemImage: "doc.on.doc.fill")
+                        }.foregroundColor(Color(UIColor.label))
                         
+                        NavigationLink {
+                            UserNotesView(model: .init(id: model.user.id), editble: editble)
+                        } label: {
+                            Label("Notes", systemImage: "note.text")
+                        }.foregroundColor(Color(UIColor.label))
                     }
-                    
-                    if userEnv.id == model.user.id {
-                        Section {
-                            Button(action: signOut) {
-                                Text("Sign out")
-                            }
-                        }
-                    }
-                    
-                    UserIDTextView()
-                    
                 }
                 
-                .navigationTitle(model.user.userName)
-                .onAppear {
-                    model.getListOfFiles()
-                }
-                .sheet(isPresented: $model.showPDFViewes) {
-                    if let url = model.pdfUrlToView {
-                        PDFViewer(url: url)
-                    }
-                }
-                .refreshable(action: {
-                    self.model.getListOfFiles()
-                })
-                .toast(isPresenting: $model.showLoadingAlert) {
-                    AlertToast(type: .loading, title: "Loading")
-                }
-                .toast(isPresenting: $model.showErrorAlert) {
-                    AlertToast(displayMode: .alert, type: .error(.red), title: model.errorAlertText)
-                }
-                .toast(isPresenting: $showAlert) {
-                    AlertToast(displayMode: .alert, type: .complete(.green))
-                }
-                .sheet(isPresented: $isPickerPresented) {
-                    DocumentPickerRepresentable { url in
-                        if url.startAccessingSecurityScopedResource() {
-                            self.model.showLoadingAlert = true
-                            uploadPdf(fileURL: url) { result in
-                                switch result {
-                                    case .success(let downloadURL):
-                                        print("Загруженный URL: \(downloadURL)")
-                                        self.model.getListOfFiles()
-                                        self.model.showLoadingAlert = false
-                                    case .failure(let error):
-                                        print("Ошибка загрузки блять: \(error)")
-                                        self.model.showLoadingAlert = false
-                                        self.model.errorAlertText = error.localizedDescription
-                                        self.model.showErrorAlert = true
-                                }
-                               
-                            }
-                            url.stopAccessingSecurityScopedResource()
-                        } else {
-                            self.model.errorAlertText = "Failed"
-                            self.model.showErrorAlert = true
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func signOut() {
-        try? Auth.auth().signOut()
-        if let user = Auth.auth().currentUser {
-            print(user.email!)
-            
-        } else {
-            print("no user")
-            
-            userEnv.isLogged = false
-        }
-    }
-    
-    func copyFileToLocalDirectory(fileURL: URL, completion: @escaping (Result<URL, Error>) -> Void) {
-        let fileManager = FileManager.default
-        let tempDirURL = fileManager.temporaryDirectory
-        let targetURL = tempDirURL.appendingPathComponent(fileURL.lastPathComponent)
-        
-        do {
-            // Если файл уже существует, удаляем его перед копированием
-            if fileManager.fileExists(atPath: targetURL.path) {
-                try fileManager.removeItem(at: targetURL)
-            }
-            try fileManager.copyItem(at: fileURL, to: targetURL)
-            completion(.success(targetURL))
-        } catch let error {
-            completion(.failure(error))
-        }
-    }
-    
-    func uploadPdf(fileURL: URL, completion: @escaping (Result<URL, Error>) -> Void) {
-        // Сначала копируем файл в локальную директорию
-        
-        copyFileToLocalDirectory(fileURL: fileURL) { result in
-            switch result {
-                case .success(let localURL):
-
-                    let storageRef = Storage.storage().reference()
-                    let pdfRef = storageRef.child("pdfs/\(model.user.id)/\(localURL.lastPathComponent)")
-                    
-                    pdfRef.putFile(from: localURL, metadata: nil) { metadata, error in
-                        if let error = error {
-                            completion(.failure(error))
-                            return
-                        }
+                if editble {
+                    Section("Login info") {
+                        TextInput(text: model.user.email,
+                                  title: "Email: ",
+                                  systemImage: "envelope.fill")
                         
-                        pdfRef.downloadURL { url, error in
-                            if let error = error {
-                                completion(.failure(error))
-                            } else if let url = url {
-                                completion(.success(url))
+                        TextInput(text: model.user.password,
+                                  title: "Password: ",
+                                  systemImage: "lock.fill")
+                    }
+                }
+                
+                Section() {
+                    PhotosPicker("Change avatar", selection: $avatarItem, matching: .images)
+                        //.disabled(!editble)
+                        .onChange(of: avatarItem)  {
+                            Task {
+                                if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
+                                    let renderer = ImageRenderer(content: loaded)
+                                    let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.0 : 0.7
+                                    if let data = renderer.uiImage?.jpegData(compressionQuality: compression) {
+                                        model.uploadImage(imageData: data)
+                                    } else {
+                                        print("Failed 1")
+                                    }
+                                } else {
+                                    print("Failed 2")
+                                }
                             }
                         }
+                }
+                
+                if userEnv.id == model.user.id {
+                    Section {
+                        Button {
+                            model.signOut {
+                                userEnv.isLogged = false
+                            }
+                        } label: {
+                            Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right.fill")
+                        }
                     }
-                    
-                    
-                case .failure(let error):
-                    completion(.failure(error))
+                }
+                
             }
+            
+            .navigationTitle("Profile")
+            .onAppear {
+                model.getThumbnaliAvatarUrl()
+            }
+            .sheet(isPresented: $model.isShowingFullScreen) {
+                VStack {
+                    if let url = model.fullSizeImage {
+                        FullScreenImageView(url: url)
+                    } else {
+                        Text("invalid url")
+                    }
+                }
+            }
+            .refreshable(action: {
+                self.model.fetchLinkedUserDate()
+            })
+            .toast(isPresenting: $model.showLoadingAlert) {
+                AlertToast(type: .loading, title: "Loading")
+            }
+            .toast(isPresenting: $model.showErrorAlert) {
+                AlertToast(displayMode: .alert, type: .error(.red), title: model.errorAlertText)
+            }
+            .toast(isPresenting: $showAlert) {
+                AlertToast(displayMode: .alert, type: .complete(.green))
+            }
+            
         }
+        
     }
+    
+    
     
 }
-
+//
 //#Preview {
-//    ResidentProfileView()
+//    ResidentProfileView(model: .init(user: Remote.User.init(id: "", userName: "Denis Kotelnikov")))
 //}

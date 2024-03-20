@@ -3,4 +3,211 @@
    uuid = "AAE6E9F1-EDFF-46AC-A17A-478E2A3C4816"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7F1B0B8B-9F28-47BE-BC6F-4B2D55E04037"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShelterManager/Screens/PDFViewer/PDFViewer.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "15"
+            endingLineNumber = "15"
+            landmarkName = "makeUIView(context:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5E0D98DE-0AA9-4012-A589-1438F348EE1B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShelterManager/Screens/PDFViewer/PDFViewer.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "28"
+            endingLineNumber = "28"
+            landmarkName = "updateUIView(_:context:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "86B5470D-6482-47ED-858A-CAE02275EE67"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShelterManager/Screens/Profile/ResidentProfileView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
+            landmarkName = "uploadImage(imageData:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4FF2DA65-01E0-4BDD-B55B-55B390ACE528"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShelterManager/Screens/Profile/ResidentProfileView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
+            landmarkName = "getFullAvatarUrlFrom()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A95E3C23-F2F6-452E-AED9-8247F4EF792F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShelterManager/Screens/Profile/ResidentProfileView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "138"
+            endingLineNumber = "138"
+            landmarkName = "getFullAvatarUrlFrom()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CA058911-D69B-4F80-88B6-E16619C7E2BA"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShelterManager/Screens/Profile/ResidentProfileView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
+            landmarkName = "init(userID:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "76FE8E43-2BCF-4102-80CB-66D338DA644E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShelterManager/Screens/Profile/ResidentProfileView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
+            landmarkName = "uploadImage(imageData:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F2EF106E-3B57-4DE8-9E93-C342FE50080B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShelterManager/Screens/LivingSpace.Details/LivingSpaceDetails.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "updateUser(_:completion:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F2EF106E-3B57-4DE8-9E93-C342FE50080B - fa304b9094336898"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in ShelterManager.LivingSpaceDetailsModel.updateUser(_: ShelterManager.Remote.User, completion: () -&gt; ()) -&gt; ()"
+                  moduleName = "ShelterManager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/LivingSpace.Details/LivingSpaceDetails.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "4873">
+               </Location>
+               <Location
+                  uuid = "F2EF106E-3B57-4DE8-9E93-C342FE50080B - b50bb5950218b49e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in ShelterManager.LivingSpaceDetailsModel.updateUser(_: ShelterManager.Remote.User, completion: () -&gt; ()) -&gt; ()"
+                  moduleName = "ShelterManager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/LivingSpace.Details/LivingSpaceDetails.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "3688">
+               </Location>
+               <Location
+                  uuid = "F2EF106E-3B57-4DE8-9E93-C342FE50080B - 71ede79668e1f09c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for closure #1 @Sendable () async -&gt; () in ShelterManager.LivingSpaceDetailsModel.updateUser(_: ShelterManager.Remote.User, completion: () -&gt; ()) -&gt; ()"
+                  moduleName = "ShelterManager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/LivingSpace.Details/LivingSpaceDetails.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "2283">
+               </Location>
+               <Location
+                  uuid = "F2EF106E-3B57-4DE8-9E93-C342FE50080B - cc387b77e14dbc5b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(12) suspend resume partial function for closure #1 @Sendable () async -&gt; () in ShelterManager.LivingSpaceDetailsModel.updateUser(_: ShelterManager.Remote.User, completion: () -&gt; ()) -&gt; ()"
+                  moduleName = "ShelterManager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/LivingSpace.Details/LivingSpaceDetails.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "3734">
+               </Location>
+               <Location
+                  uuid = "F2EF106E-3B57-4DE8-9E93-C342FE50080B - cfed0c60eb9b5b58"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(13) suspend resume partial function for closure #1 @Sendable () async -&gt; () in ShelterManager.LivingSpaceDetailsModel.updateUser(_: ShelterManager.Remote.User, completion: () -&gt; ()) -&gt; ()"
+                  moduleName = "ShelterManager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/LivingSpace.Details/LivingSpaceDetails.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "2381">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

@@ -10,7 +10,7 @@ import MapKit
 
 class ContentViewModel: NSObject, ObservableObject {
     
-    @Published private(set) var results: Array<Address> = []
+    @Published private(set) var results: Array<Remote.Address> = []
     @Published var searchableText = ""
 
     private lazy var localSearchCompleter: MKLocalSearchCompleter = {
@@ -29,7 +29,7 @@ extension ContentViewModel: MKLocalSearchCompleterDelegate {
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         Task { @MainActor in
             results = completer.results.map {
-                Address(title: $0.title, subtitle: $0.subtitle)
+                Remote.Address(title: $0.title, subtitle: $0.subtitle)
             }
         }
     }

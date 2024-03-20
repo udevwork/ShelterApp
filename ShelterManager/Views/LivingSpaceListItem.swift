@@ -3,28 +3,38 @@ import RealmSwift
 
 struct LivingSpaceListItem: View {
     
-    @ObservedRealmObject var livingSpace: LivingSpace
+    var livingSpace: Remote.LivingSpace?
     
     var body: some View {
-        HStack(spacing: 16) {
-            
-            VStack(alignment: .leading) {
-                HStack(spacing:13) {
-                    Image(systemName: "door.left.hand.open").frame(width: 10, height: 10, alignment: .center)
-                    HStack(spacing:2) {
-                        Text("№")
-                        Text(livingSpace.number).bold()
+        if let livingSpace = livingSpace {
+            HStack(spacing: 16) {
+                
+                VStack(alignment: .leading) {
+                    HStack() {
+                        Image(systemName: "door.left.hand.open")
+                        HStack(spacing:3) {
+                            Text("№")
+                            Text(livingSpace.number).bold()
+                        }
                     }
-                }.offset(x:2)
-                Text("Floor: \(livingSpace.floor)").font(.footnote).foregroundStyle(.secondary).bold()
+                    Text("Floor: \(livingSpace.floor)").font(.footnote).foregroundStyle(.secondary).bold()
+                }
+                
+                Spacer()
+                
+                HStack {
+                    Image(systemName: "person.2.fill")
+                        .foregroundColor(
+                            self.indicatorColor(current: livingSpace.linkedUserIDs.count
+                                                , max: livingSpace.maxUsersCount))
+                    Text("\(livingSpace.linkedUserIDs.count) / \(livingSpace.maxUsersCount)").bold()
+                }
+                
             }
-            Spacer()
-            HStack {
-                Image(systemName: "person.2.fill").foregroundColor(self.indicatorColor(current: Int(livingSpace.assigneeResidents.count) , max: Int(livingSpace.maxResident) ?? 0))
-                Text("\(livingSpace.assigneeResidents.count) / \(livingSpace.maxResident)").bold()
-            }
-            
+        } else {
+            Text("No top linked").foregroundColor(Color(UIColor.secondaryLabel))
         }
+        
     }
     
     func indicatorColor(current: Int, max: Int) -> Color {
@@ -41,7 +51,7 @@ struct LivingSpaceListItem: View {
     }
     
 }
-
-#Preview {
-    LivingSpaceListItem(livingSpace: .init(number: "83"))
-}
+//
+//#Preview {
+//    LivingSpaceListItem(livingSpace: .init(number: "83"))
+//}

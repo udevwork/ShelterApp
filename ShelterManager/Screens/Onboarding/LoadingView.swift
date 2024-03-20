@@ -10,12 +10,19 @@ import SwiftUI
 struct LoadingView: View {
     var body: some View {
         VStack {
-            Image("AppIcon")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 200, height: 200, alignment: .center)
-            Text("Shelter Manager").font(.title)
-        }
+            VStack {
+                Image("icon")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 150, height: 150, alignment: .center)
+                Text("New Green Home").font(.title)
+                    .foregroundColor(Color.white)
+                ProgressView()
+                    .controlSize(.large)
+            }.offset(y: 40)
+         
+        }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color("backcolor"))
+            .edgesIgnoringSafeArea(.all)
     }
 }
 

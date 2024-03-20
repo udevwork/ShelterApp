@@ -11,34 +11,55 @@ import FirebaseAuth
 
 class AdministratorProfileModel: ObservableObject {
     
+    @Published var buildingPhotoEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(buildingPhotoEnabled, forKey: "buildingPhotoEnabled")
+        }
+    }
+    
+    @Published var buildingDitailPhotoEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(buildingDitailPhotoEnabled, forKey: "buildingDitailPhotoEnabled")
+        }
+    }
+    
+    @Published var userPhotoEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(userPhotoEnabled, forKey: "userPhotoEnabled")
+        }
+    }
+    @Published var extremeImageCompressionEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(extremeImageCompressionEnabled, forKey: "extremeImageCompressionEnabled")
+        }
+    }
+    
+    @Published var germanLanguage: Bool {
+        didSet {
+            var preferredLanguage = "en" // Замените "fr" на код языка, который вы хотите использовать
+            if germanLanguage {
+                preferredLanguage = "de"
+            }
+            UserDefaults.standard.set(germanLanguage, forKey: "germanLanguage")
+            UserDefaults.standard.set([preferredLanguage], forKey: "AppleLanguages")
+        }
+    }
+    
     init() {
-        
+        self.buildingPhotoEnabled = UserDefaults.standard.bool(forKey: "buildingPhotoEnabled")
+        self.buildingDitailPhotoEnabled = UserDefaults.standard.bool(forKey: "buildingDitailPhotoEnabled")
+        self.userPhotoEnabled = UserDefaults.standard.bool(forKey: "userPhotoEnabled")
+        self.germanLanguage = UserDefaults.standard.bool(forKey: "germanLanguage")
+        self.extremeImageCompressionEnabled = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled")
     }
     
     func saveData(user: UserEnv) {
-        // Получаем ссылку на хранилище Firestore
-        let db = Firestore.firestore()
-        
-        // Ссылка на конкретный документ пользователя по ID
         let id = UserEnv.current?.uid ?? ""
-        let userRef = db.collection("Users").document(id)
-        
-        // Создаем словарь из обновленных данных пользователя
-        let updatedUserData: [String: Any] = [
-            "userName": user.userName
-        ]
-        
-        // Обновляем данные пользователя
-        userRef.updateData(updatedUserData) { error in
-            if let error = error {
-                print("Ошибка при обновлении пользователя: \(error.localizedDescription)")
-            } else {
-                print("Данные пользователя успешно обновлены")
-            }
-        }
+        let userRef = Fire.base.users.document(id)
+        let updatedUserData: [String: Any] = ["userName": user.userName]
+        Task { try await userRef.updateData(updatedUserData) }
     }
- 
-    
+
 }
 
 struct AdministratorProfileView: View {
@@ -48,7 +69,8 @@ struct AdministratorProfileView: View {
     
     var body: some View {
         NavigationStack {
-            List {
+            Form {
+                
                 Section("Person") {
                     HStack {
                         Text("User").foregroundColor(Color(UIColor.secondaryLabel))
@@ -58,23 +80,50 @@ struct AdministratorProfileView: View {
                     Button {
                         model.saveData(user: user)
                     } label: {
-                        Label("Save", systemImage: "icloud.and.arrow.up")
+                        Label("Save", systemImage: "icloud.and.arrow.up.fill")
                     }
                 }
                 
-                Section("Remote") {
-                    NavigationLink {
-                        ResidentsRemoteList() .navigationTitle("Remote users")
-                    } label: {
-                        Label("Open remote user list", systemImage: "person.icloud.fill")
+                Section {
+                    Toggle(isOn: $model.buildingPhotoEnabled) {
+                        Text("Building thumbnails")
                     }
-                    NavigationLink {
-                        CreateNewRemoteUserView()
-                    } label: {
-                        Label("Create new remote user", systemImage: "person.fill.badge.plus")
-                    }
+                } footer: {
+                    Text("A small image used in the list of buildings")
                 }
-           
+
+                Section {
+                    Toggle(isOn: $model.buildingDitailPhotoEnabled) {
+                        Text("Building ditail photo")
+                    }
+                } footer: {
+                    Text("Large image on the detailed view screen of the building")
+                }
+                    
+                Section {
+                    Toggle(isOn: $model.userPhotoEnabled) {
+                        Text("User thumbnails")
+                    }
+                } footer: {
+                    Text("A small image used in the list of users")
+                }
+                
+                Section {
+                    Toggle(isOn: $model.extremeImageCompressionEnabled) {
+                        Text("Extreme image compression")
+                    }
+                } footer: {
+                    Text("Adjusting the compression ratio of images before sending to the server")
+                }
+                
+                
+                Section {
+                    Toggle(isOn: $model.germanLanguage) {
+                        Text("Use German Language")
+                    }
+                } footer: {
+                    Text("REQUIRES A REBOOT OF THE APPLICATION")
+                }
                 
                 Section {
                     Button(action: signOut) {
@@ -82,20 +131,9 @@ struct AdministratorProfileView: View {
                     }
                 }
                             
-                NavigationLink {
-                    DebugView()
-                } label: {
-                    Label("Development menu", systemImage: "command.circle.fill")
-                }.frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.center)
-                    .font(.footnote)
-                    .listRowBackground(Color.clear)
-                    .opacity(0.5)
                 
             }.navigationTitle("Administrator")
-                .refreshable {
-                    user.checkUpdate()
-                }
+             
         }
     }
     
