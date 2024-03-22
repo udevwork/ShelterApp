@@ -133,6 +133,9 @@ struct PhotoGalleryView: View {
                 }
             }
             .padding(5)
+           
+        }
+        .toolbar(content: {
             HStack {
                 Image(systemName: "plus.circle.fill")
                 PhotosPicker("Upload photo", selection: $avatarItem, matching: .images)
@@ -149,8 +152,8 @@ struct PhotoGalleryView: View {
                             }
                         }
                     }
-            }.padding(14).background(.gray.opacity(0.3)).cornerRadius(13)
-        }
+            }
+        })
         .sheet(isPresented: $model.isShowingFullScreen) {
             VStack {
                 if let url = model.fullSizeImage {

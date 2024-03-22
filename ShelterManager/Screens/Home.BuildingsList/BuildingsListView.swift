@@ -145,7 +145,7 @@ struct BuildingsListView: View {
     
     var body: some View {
         NavigationStack(path: $path) {
-            List {
+            List {                
                 Section {
                     Button {
                         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()

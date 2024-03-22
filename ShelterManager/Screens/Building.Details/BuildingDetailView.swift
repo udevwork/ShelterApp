@@ -324,25 +324,7 @@ struct BuildingDetailView: View {
             } label: {
                 Label("Create livingspace", systemImage: "plus.circle.fill")
             }
-            
-            Section() {
-                PhotosPicker("Change picture", selection: $avatarItem, matching: .images)
-                    .onChange(of: avatarItem)  {
-                        Task {
-                            if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
-                                let renderer = ImageRenderer(content: loaded)
-                                let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.0 : 0.7
-                                if let data = renderer.uiImage?.jpegData(compressionQuality: compression) {
-                                    model.uploadImage(imageData: data)
-                                } else {
-                                    print("Failed 1")
-                                }
-                            } else {
-                                print("Failed 2")
-                            }
-                        }
-                    }
-            }
+       
             
         }
         .scrollDismissesKeyboard(.interactively)
@@ -373,6 +355,22 @@ struct BuildingDetailView: View {
             AlertToast(type: .loading, title: "Loading")
         }
         .toolbar {
+            PhotosPicker("Change picture", selection: $avatarItem, matching: .images)
+                .onChange(of: avatarItem)  {
+                    Task {
+                        if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
+                            let renderer = ImageRenderer(content: loaded)
+                            let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.0 : 0.7
+                            if let data = renderer.uiImage?.jpegData(compressionQuality: compression) {
+                                model.uploadImage(imageData: data)
+                            } else {
+                                print("Failed 1")
+                            }
+                        } else {
+                            print("Failed 2")
+                        }
+                    }
+                }
             if let address = model.building.address {
                 NavigationLink {
                     MapView(address: address)

@@ -207,6 +207,16 @@
         }
       }
     },
+    "close" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
+          }
+        }
+      }
+    },
     "Close" : {
       "localizations" : {
         "de" : {
@@ -268,7 +278,14 @@
       }
     },
     "Create livingspace" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wohnraum schaffen"
+          }
+        }
+      }
     },
     "Create new User" : {
       "localizations" : {
@@ -296,6 +313,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Löschen"
+          }
+        }
+      }
+    },
+    "document" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dokument"
           }
         }
       }
@@ -396,6 +423,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Galerie"
+          }
+        }
+      }
+    },
+    "image" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bild"
           }
         }
       }
@@ -590,6 +627,16 @@
         }
       }
     },
+    "PDF Scan" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF Scannen"
+          }
+        }
+      }
+    },
     "Person" : {
       "localizations" : {
         "de" : {
@@ -606,6 +653,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fotos"
+          }
+        }
+      }
+    },
+    "Press the Scan button" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drücken Sie die Scan-Taste"
           }
         }
       }
@@ -680,12 +737,32 @@
         }
       }
     },
+    "save" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "speichern"
+          }
+        }
+      }
+    },
     "Save" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Speichern"
+          }
+        }
+      }
+    },
+    "Scan" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan"
           }
         }
       }
@@ -747,6 +824,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einstellungen"
+          }
+        }
+      }
+    },
+    "Share" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teilen"
           }
         }
       }
@@ -830,6 +917,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "udevwork@gmail.com"
+          }
+        }
+      }
+    },
+    "Upload" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laden"
           }
         }
       }

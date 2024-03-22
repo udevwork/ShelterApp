@@ -265,25 +265,6 @@ struct ResidentProfileView: View {
                     }
                 }
                 
-                Section() {
-                    PhotosPicker("Change avatar", selection: $avatarItem, matching: .images)
-                        //.disabled(!editble)
-                        .onChange(of: avatarItem)  {
-                            Task {
-                                if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
-                                    let renderer = ImageRenderer(content: loaded)
-                                    let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.0 : 0.7
-                                    if let data = renderer.uiImage?.jpegData(compressionQuality: compression) {
-                                        model.uploadImage(imageData: data)
-                                    } else {
-                                        print("Failed 1")
-                                    }
-                                } else {
-                                    print("Failed 2")
-                                }
-                            }
-                        }
-                }
                 
                 if userEnv.id == model.user.id {
                     Section {
@@ -300,6 +281,25 @@ struct ResidentProfileView: View {
             }
             
             .navigationTitle("Profile")
+            .toolbar(content: {
+                PhotosPicker("Change avatar", selection: $avatarItem, matching: .images)
+                    //.disabled(!editble)
+                    .onChange(of: avatarItem)  {
+                        Task {
+                            if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
+                                let renderer = ImageRenderer(content: loaded)
+                                let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.0 : 0.7
+                                if let data = renderer.uiImage?.jpegData(compressionQuality: compression) {
+                                    model.uploadImage(imageData: data)
+                                } else {
+                                    print("Failed 1")
+                                }
+                            } else {
+                                print("Failed 2")
+                            }
+                        }
+                    }
+            })
             .onAppear {
                 model.getThumbnaliAvatarUrl()
             }
@@ -324,6 +324,7 @@ struct ResidentProfileView: View {
             .toast(isPresenting: $showAlert) {
                 AlertToast(displayMode: .alert, type: .complete(.green))
             }
+            
             
         }
         

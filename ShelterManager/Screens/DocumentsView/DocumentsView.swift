@@ -146,6 +146,27 @@ class DocumentsViewModel: ObservableObject {
         }
     }
     
+    func uploadPdf(fileData: Data, name: String? = nil) {
+        self.showLoadingAlert = true
+        let storageRef = Storage.storage().reference()
+        var uuiname = UUID().uuidString
+        if let name = name, name.isEmpty == false {
+            uuiname = name
+        }
+        let pdfRef = storageRef.child("pdfs/\(self.id)/\(uuiname).pdf")
+        
+        Task {
+            DispatchQueue.main.async {
+                self.showLoadingAlert = true
+            }
+           
+            let meta = try await pdfRef.putDataAsync(fileData)
+
+            self.getListOfFiles()
+        }
+            
+    }
+    
 }
 
 struct DocumentsView: View {
@@ -179,6 +200,9 @@ struct DocumentsView: View {
                     }
                 }
             }
+            
+        }
+        .toolbar(content: {
             if editble {
                 Button {
                     UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
@@ -188,8 +212,17 @@ struct DocumentsView: View {
                         Label("Upload pdf file", systemImage: "plus.circle.fill")
                     }
                 }
+                
+                NavigationLink {
+                    PDFCamera(documentsViewModel: model)
+                } label: {
+                    Image(systemName: "camera.fill")
+                }
+
+                
             }
-        }.sheet(isPresented: $isPickerPresented) {
+        })
+        .sheet(isPresented: $isPickerPresented) {
             DocumentPickerRepresentable { url in
                 if url.startAccessingSecurityScopedResource() {
                     self.model.showLoadingAlert = true

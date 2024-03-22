@@ -74,6 +74,7 @@ class PhotoUploaderManager {
 //        let photoName = UUID().uuidString
         let imageRef = store.reference().child("avatars/\(id)/full/avatar.jpg")
         
+     
         // Загрузка данных
         _ = try await imageRef.putDataAsync(imageData)
         
@@ -126,11 +127,18 @@ class PhotoUploaderManager {
         let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
         UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
         image.draw(in: rect)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        // Возвращаем изменённые данные
-        let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.5 : 1.0
-        return newImage?.jpegData(compressionQuality: compression)
+        if let newImage = UIGraphicsGetImageFromCurrentImageContext() {
+            UIGraphicsEndImageContext()
+
+            // Учитываем ориентацию исходного изображения
+            let orientedImage = UIImage(cgImage: newImage.cgImage!, scale: 1.0, orientation: image.imageOrientation)
+
+            // Возвращаем изменённые данные с учётом ориентации
+            let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.5 : 1.0
+            return orientedImage.jpegData(compressionQuality: compression)
+        } else {
+            UIGraphicsEndImageContext()
+            return nil
+        }
     }
 }

@@ -12,6 +12,9 @@ struct AddressAutocompleteModalView: View {
     @StateObject var viewModel: ContentViewModel
     @State private var isFocusedTextField: Bool = false
     @Binding var autocomplete: Remote.Address?
+    
+    @State var temp_autocomplete: Remote.Address?
+    
     @Environment(\.dismiss) var dismiss
 
     
@@ -22,16 +25,16 @@ struct AddressAutocompleteModalView: View {
                 if autocomplete != nil {
                     Section ("Selected Address:"){
                     Button {
-                        //viewModel.searchableText = autocomplete.title + " " + autocomplete.subtitle
-                        if autocomplete == nil {
+                        if temp_autocomplete == nil {
                             //autocomplete = address
-                            autocomplete = .init(title: viewModel.searchableText, subtitle: "")
+                            temp_autocomplete = .init(title: viewModel.searchableText, subtitle: "")
                         }
+                        autocomplete = temp_autocomplete
                         dismiss()
                     } label: {
                         VStack(alignment: .leading) {
                             
-                            AddressListItemView(address: autocomplete).foregroundStyle(Color(uiColor: UIColor.label))
+                            AddressListItemView(address: temp_autocomplete).foregroundStyle(Color(uiColor: UIColor.label))
                             
                             Label("Apply selected address", systemImage: "checkmark.circle.fill")
                                 .padding(14).background(.gray.opacity(0.1)).cornerRadius(13)
@@ -47,7 +50,7 @@ struct AddressAutocompleteModalView: View {
                     ForEach(self.viewModel.results) { address in
                         Button {
                             viewModel.searchableText = address.title + " " + address.subtitle
-                            autocomplete = address
+                            temp_autocomplete = address
                         } label: {
                             AddressListItemView(address: address).foregroundStyle(Color(uiColor: UIColor.label))
                         }
@@ -69,6 +72,7 @@ struct AddressAutocompleteModalView: View {
             .onReceive(viewModel.$searchableText.debounce(for: .seconds(1), scheduler: DispatchQueue.main)) {
                 viewModel.searchAddress($0)
             }
+        
        
     }
     

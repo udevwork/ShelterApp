@@ -91,6 +91,15 @@
       }
     },
     {
+      "identity" : "irlpdfscancontent",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/charlymr/IRLPDFScanContent",
+      "state" : {
+        "revision" : "86780accd60ac458ead0f5902ac375f5bdfe4069",
+        "version" : "1.1.1"
+      }
+    },
+    {
       "identity" : "kingfisher",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
