@@ -48,7 +48,7 @@ struct ShelterManagerApp: App {
                             .environmentObject(clipBoard)
                             .environmentObject(user)
                         } else {
-                            ResidentProfileView( model: .init(userID: UserEnv.current!.uid), editble: false)
+                            ResidentProfileView( model: .init(userID: user.id), editble: false)
                                 .environmentObject(user)
                         }
                     } else {

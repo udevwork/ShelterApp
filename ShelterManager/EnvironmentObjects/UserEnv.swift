@@ -9,7 +9,6 @@ import Foundation
 import RealmSwift
 import Combine
 import Firebase
-import FirebaseAuth
 import FirebaseCore
 import FirebaseFirestore
 
@@ -23,41 +22,84 @@ class UserEnv: ObservableObject, Identifiable {
     @Published var id           : String    = ""
     @Published var isAdmin      : Bool?     = false
     @Published var userName     : String    = ""
+    @Published var email        : String? = ""
+    @Published var password     : String? = ""
     
-    static var current: Firebase.User? {
-        get {
-            Auth.auth().currentUser
-        }
-    }
-  
+    let defaults = UserDefaults.standard
+    
     init() {
-        checkUpdate()
+        // Last saved pass and mail
+        let email = defaults.string(forKey: "lastEmail") ?? ""
+        let password = defaults.string(forKey: "lastPassword") ?? ""
+        
+        let _logged = defaults.bool(forKey: "isLogged")
+        if _logged {
+            checkUpdate(email: email, password: password, completion: { _ in })
+        }
+        
     }
     
-    func checkUpdate() {
+    func signout(){
+        isLogged = false
+        self.defaults.set(false, forKey: "isLogged")
+    }
+    
+    func checkUpdate(email: String, password: String, completion: @escaping (Bool)->()) {
         self.isLoading = true
-        if let user = Self.current {
-            isLogged = true
-            let id = user.uid
-            let doc = Fire.base.users.document(id)
-            
-            Task {
-                if let doc = try? await doc.getDocument(), let user: Remote.User = try? doc.decode() {
+        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+        findUserByEmailAndPassword(email: email, password: password) { result in
+            switch result {
+                case .success(let document):
+                    print("Найден пользователь: \(document.data()!)")
                     
-                    self.id = user.id
-                    self.isAdmin = user.isAdmin
-                    self.userName = user.userName
-                } else {
-                    try Auth.auth().signOut()
+                    if let _u: Remote.User = try? document.decode() {
+                        self.id = _u.id
+                        self.isAdmin = _u.isAdmin
+                        self.userName = _u.userName
+                        self.email = _u.email
+                        self.password = _u.password
+                        
+                        self.isLogged = true
+                        self.isLoading = false
+                      
+                        self.defaults.set(email, forKey: "lastEmail")
+                        self.defaults.set(password, forKey: "lastPassword")
+                        self.defaults.set(true, forKey: "isLogged")
+                        completion(true)
+                    } else {
+                        self.isLogged = false
+                        self.isLoading = false
+                        completion(false)
+                    }
+                    
+                case .failure(let error):
+                    print("Ошибка поиска пользователя: \(error.localizedDescription)")
+                    print("email: \(email), password: \(password)")
                     self.isLogged = false
                     self.isLoading = false
-                }
-                self.isLoading = false
+                    completion(false)
             }
-            
-        } else {
-            self.isLogged = false
-            self.isLoading = false
+        }
+     
+    }
+    
+    func findUserByEmailAndPassword(email: String, password: String, completion: @escaping (Result<DocumentSnapshot, Error>) -> Void) {
+
+        let usersCollection = Fire.base.users
+        
+        usersCollection.whereField("email", isEqualTo: email).whereField("password", isEqualTo: password).getDocuments { snapshot, error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                print("Find documents: \(snapshot?.documents.count)")
+                guard let documents = snapshot?.documents, !documents.isEmpty else {
+                    completion(.failure(NSError(domain: "com.example.firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "User not found."])))
+                    return
+                }
+                
+                // Предполагается, что email и пароль уникальны, поэтому возвращаем первый найденный документ.
+                completion(.success(documents.first!))
+            }
         }
     }
 }

@@ -6,10 +6,17 @@
 //
 
 import SwiftUI
+import AlertToast
 import FirebaseFirestore
 import FirebaseAuth
 
 class AdministratorProfileModel: ObservableObject {
+    
+    // Alerts
+    @Published var showAlert: Bool = false
+    @Published var showLoadingAlert: Bool = false
+    @Published var showErrorAlert: Bool = false
+    var errorAlertText: String = ""
     
     @Published var buildingPhotoEnabled: Bool {
         didSet {
@@ -36,7 +43,7 @@ class AdministratorProfileModel: ObservableObject {
     
     @Published var germanLanguage: Bool {
         didSet {
-            var preferredLanguage = "en" // Замените "fr" на код языка, который вы хотите использовать
+            var preferredLanguage = "en"
             if germanLanguage {
                 preferredLanguage = "de"
             }
@@ -54,10 +61,28 @@ class AdministratorProfileModel: ObservableObject {
     }
     
     func saveData(user: UserEnv) {
-        let id = UserEnv.current?.uid ?? ""
+        let id = user.id
         let userRef = Fire.base.users.document(id)
         let updatedUserData: [String: Any] = ["userName": user.userName]
         Task { try await userRef.updateData(updatedUserData) }
+        self.showAlert = true
+    }
+    
+    func updateCredits(user: UserEnv) {
+        
+        let id = user.id
+        let userRef = Fire.base.users.document(id)
+    
+        guard let email = user.email, let password = user.password else {
+            errorAlertText = "Filds cannot be empty"
+            showErrorAlert = true
+            return
+        }
+        
+        Task {
+            try? await userRef.updateData(["email":email, "password": password])
+        }
+        self.showAlert = true
     }
 
 }
@@ -125,30 +150,47 @@ struct AdministratorProfileView: View {
                     Text("REQUIRES A REBOOT OF THE APPLICATION")
                 }
                 
+                
+                Section("Login info") {
+                    TextInput(text: $user.email ?? "",
+                              title: "Email: ",
+                              systemImage: "envelope.fill")
+                    
+                    TextInput(text: $user.password ?? "",
+                              title: "Password: ",
+                              systemImage: "lock.fill")
+                    Button {
+                        model.updateCredits(user: user)
+                        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                        
+                    } label: {
+                        Label("Update credits", systemImage: "icloud.and.arrow.up.fill")
+                    }
+                }
+                
+                
                 Section {
-                    Button(action: signOut) {
+                    Button(action: {
+                        user.signout()
+                    }) {
                         Label("Sign out", systemImage: "rectangle.portrait.and.arrow.forward")
                     }
                 }
-                            
+                
                 
             }.navigationTitle("Administrator")
-             
-        }
-    }
-    
-    func signOut() {
-        try? Auth.auth().signOut()
-        if let user = Auth.auth().currentUser {
-            print(user.email!)
-         
-        } else {
-            print("no user")
+                .toast(isPresenting: $model.showLoadingAlert) {
+                    AlertToast(type: .loading, title: "Loading")
+                }
+                .toast(isPresenting: $model.showErrorAlert) {
+                    AlertToast(displayMode: .alert, type: .error(.red), title: model.errorAlertText)
+                }
+                .toast(isPresenting: $model.showAlert) {
+                    AlertToast(displayMode: .alert, type: .complete(.green))
+                }
             
-            user.isLogged = false
         }
     }
-    
 }
 
 #Preview {

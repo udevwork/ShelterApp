@@ -24,6 +24,7 @@ class ResidentProfileModel: ObservableObject {
     @Published var avatarUrl: URL? = nil
     
     // alerts
+    @Published var showAlert: Bool = false
     @Published var showLoadingAlert: Bool = false
     @Published var showErrorAlert: Bool = false
     var errorAlertText: String = ""
@@ -95,21 +96,27 @@ class ResidentProfileModel: ObservableObject {
         Task {
             try? await userRef.setData(data)
         }
+        showAlert.toggle()
+    }
+    
+    func updateCredits() {
+        
+        let id = user.id
+        let userRef = Fire.base.users.document(id)
+    
+        guard let email = user.email, let password = user.password else {
+            errorAlertText = "Filds cannot be empty"
+            showErrorAlert = true
+            return
+        }
+        
+        Task {
+            try? await userRef.updateData(["email":email, "password": password])
+        }
+        showAlert.toggle()
         
     }
     
-  
-    func signOut(completion: ()->()) {
-        try? Auth.auth().signOut()
-        if let user = Auth.auth().currentUser {
-            print(user.email!)
-        } else {
-            print("no user")
-            completion()
-        }
-    }
-    
- 
     func uploadImage(imageData: Data) {
         self.showLoadingAlert = true
         Task {
@@ -149,7 +156,7 @@ struct ResidentProfileView: View {
     @StateObject var model: ResidentProfileModel
     @EnvironmentObject var userEnv: UserEnv
     @State private var isPickerPresented = false
-    @State var showAlert: Bool = false
+
     
     @State private var avatarItem: PhotosPickerItem?
     
@@ -231,7 +238,7 @@ struct ResidentProfileView: View {
                         Button {
                             model.saveData()
                             UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                            self.showAlert.toggle()
+                            self.model.showAlert.toggle()
                         } label: {
                             Label("Save", systemImage: "icloud.and.arrow.up.fill")
                         }
@@ -255,13 +262,20 @@ struct ResidentProfileView: View {
                 
                 if editble {
                     Section("Login info") {
-                        TextInput(text: model.user.email,
+                        TextInput(text: $model.user.email ?? "",
                                   title: "Email: ",
                                   systemImage: "envelope.fill")
                         
-                        TextInput(text: model.user.password,
+                        TextInput(text: $model.user.password ?? "",
                                   title: "Password: ",
                                   systemImage: "lock.fill")
+                        Button {
+                            model.updateCredits()
+                            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                            
+                        } label: {
+                            Label("Update credits", systemImage: "icloud.and.arrow.up.fill")
+                        }
                     }
                 }
                 
@@ -269,9 +283,7 @@ struct ResidentProfileView: View {
                 if userEnv.id == model.user.id {
                     Section {
                         Button {
-                            model.signOut {
-                                userEnv.isLogged = false
-                            }
+                            userEnv.signout()
                         } label: {
                             Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right.fill")
                         }
@@ -286,8 +298,9 @@ struct ResidentProfileView: View {
                     //.disabled(!editble)
                     .onChange(of: avatarItem)  {
                         Task {
-                            if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
-                                let renderer = ImageRenderer(content: loaded)
+                            if let loaded = try? await avatarItem?.loadTransferable(type: Data.self) {
+                                let cont = Image(uiImage: UIImage(data: loaded)!)
+                                let renderer = ImageRenderer(content: cont)
                                 let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.0 : 0.7
                                 if let data = renderer.uiImage?.jpegData(compressionQuality: compression) {
                                     model.uploadImage(imageData: data)
@@ -321,7 +334,7 @@ struct ResidentProfileView: View {
             .toast(isPresenting: $model.showErrorAlert) {
                 AlertToast(displayMode: .alert, type: .error(.red), title: model.errorAlertText)
             }
-            .toast(isPresenting: $showAlert) {
+            .toast(isPresenting: $model.showAlert) {
                 AlertToast(displayMode: .alert, type: .complete(.green))
             }
             

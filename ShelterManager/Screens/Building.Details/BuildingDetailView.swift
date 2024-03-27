@@ -358,8 +358,9 @@ struct BuildingDetailView: View {
             PhotosPicker("Change picture", selection: $avatarItem, matching: .images)
                 .onChange(of: avatarItem)  {
                     Task {
-                        if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
-                            let renderer = ImageRenderer(content: loaded)
+                        if let loaded = try? await avatarItem?.loadTransferable(type: Data.self) {
+                            let cont = Image(uiImage: UIImage(data: loaded)!)
+                            let renderer = ImageRenderer(content: cont)
                             let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.0 : 0.7
                             if let data = renderer.uiImage?.jpegData(compressionQuality: compression) {
                                 model.uploadImage(imageData: data)

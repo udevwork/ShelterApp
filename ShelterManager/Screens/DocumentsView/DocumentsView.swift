@@ -26,7 +26,7 @@ class DocumentsViewModel: ObservableObject {
     
     func downloadPdf(storageRef: StorageReference) {
         showLoadingAlert = true
-        let localURL = FileManager.default.temporaryDirectory.appendingPathComponent(UserEnv.current?.uid ?? "tempfile")
+        let localURL = FileManager.default.temporaryDirectory.appendingPathComponent("tempfile")
         
         storageRef.write(toFile: localURL) { url, error in
             if let error = error {

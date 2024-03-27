@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Firebase
-import FirebaseAuth
 import FirebaseCore
 import FirebaseFirestore
 import AlertToast
@@ -36,20 +35,17 @@ struct SignInView: View {
                 .listRowBackground(Color.clear)
                 .frame(maxWidth: .infinity)
             
-            if Auth.auth().currentUser == nil {
-                Section("Sign in") {
-                    TextInput(text: $email,
-                              title: "Email: ",
-                              systemImage: "envelope.fill")
-                    .autocapitalization(.none)
-                    .keyboardType(.emailAddress)
-                    
-                    TextInput(text: $password,
-                              title: "Password: ",
-                              systemImage: "lock.fill")
-                    
+            
+            Section("Sign in") {
+                TextInput(text: $email,
+                          title: "Email: ",
+                          systemImage: "envelope.fill")
+                .autocapitalization(.none)
+                .keyboardType(.emailAddress)
                 
-                }
+                TextInput(text: $password,
+                          title: "Password: ",
+                          systemImage: "lock.fill")
             }
             
             HStack {
@@ -63,11 +59,21 @@ struct SignInView: View {
             }
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
+      
             
             Rectangle().frame(width: 0, height: 40, alignment: .center)
                 .foregroundColor(Color.clear)
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
+            
+            VStack {
+                if alertText.isEmpty == false {
+                    Text(alertText)
+                }
+            }.frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
+                .listRowBackground(Color.clear)
+                .foregroundStyle(Color.red)
             
             VStack {
                 Text("New Green Home App v1.0")
@@ -94,27 +100,17 @@ struct SignInView: View {
     
     func login() {
         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-        Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
-            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-            if error != nil {
-                print(error?.localizedDescription ?? "")
-                self.alertText = error?.localizedDescription ?? ""
-                self.toast.toggle()
-            } else {
-                print("success")
-                self.alertText = "Success"
-                self.toast.toggle()
-                user.isLogged = true
-                user.checkUpdate()
-                
-                let defaults = UserDefaults.standard
-                defaults.set(email, forKey: "lastEmail")
-                defaults.set(password, forKey: "lastPassword")
-                
+        user.checkUpdate(email: email, password: password, completion: { success in
+            if success == false {
+                DispatchQueue.main.asyncAfter(deadline: .now()+0.3, execute: {
+                    self.alertText = "User not found"
+                    self.toast = true
+                })
+             
             }
-        }
+        })
     }
-    
+   
     
     
 }

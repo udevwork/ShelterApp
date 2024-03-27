@@ -14,8 +14,8 @@
             filePath = "ShelterManager/Screens/Profile/ResidentProfileView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
             landmarkName = "uploadImage(imageData:)"
             landmarkType = "7">
             <Locations>
@@ -49,149 +49,50 @@
                   endingLineNumber = "118"
                   offsetFromSymbolStart = "168">
                </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4FF2DA65-01E0-4BDD-B55B-55B390ACE528"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ShelterManager/Screens/Profile/ResidentProfileView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "134"
-            endingLineNumber = "134"
-            landmarkName = "getFullAvatarUrlFrom()"
-            landmarkType = "7">
-            <Locations>
                <Location
-                  uuid = "4FF2DA65-01E0-4BDD-B55B-55B390ACE528 - b11896507ea06ed4"
+                  uuid = "86B5470D-6482-47ED-858A-CAE02275EE67 - d33ebd51a9eb22c8"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ShelterManager.ResidentProfileModel.getFullAvatarUrlFrom() -&gt; ()"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in ShelterManager.ResidentProfileModel.uploadImage(imageData: Foundation.Data) -&gt; ()"
                   moduleName = "ShelterManager"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/Profile/ResidentProfileView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "134"
-                  endingLineNumber = "134"
-                  offsetFromSymbolStart = "436">
+                  startingLineNumber = "106"
+                  endingLineNumber = "106"
+                  offsetFromSymbolStart = "177">
                </Location>
                <Location
-                  uuid = "4FF2DA65-01E0-4BDD-B55B-55B390ACE528 - b11896507ea06ed4"
+                  uuid = "86B5470D-6482-47ED-858A-CAE02275EE67 - d33ebd51a9eb5cbb"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ShelterManager.ResidentProfileModel.getFullAvatarUrlFrom() -&gt; ()"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in ShelterManager.ResidentProfileModel.uploadImage(imageData: Foundation.Data) -&gt; ()"
                   moduleName = "ShelterManager"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/Profile/ResidentProfileView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "134"
-                  endingLineNumber = "134"
-                  offsetFromSymbolStart = "652">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A95E3C23-F2F6-452E-AED9-8247F4EF792F"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ShelterManager/Screens/Profile/ResidentProfileView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "138"
-            endingLineNumber = "138"
-            landmarkName = "getFullAvatarUrlFrom()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "A95E3C23-F2F6-452E-AED9-8247F4EF792F - 6d91c707b21f2f51"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in ShelterManager.ResidentProfileModel.getFullAvatarUrlFrom() -&gt; ()"
-                  moduleName = "ShelterManager"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/Profile/ResidentProfileView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "138"
-                  endingLineNumber = "138"
-                  offsetFromSymbolStart = "155">
+                  startingLineNumber = "125"
+                  endingLineNumber = "125"
+                  offsetFromSymbolStart = "177">
                </Location>
                <Location
-                  uuid = "A95E3C23-F2F6-452E-AED9-8247F4EF792F - 6d91c707b21f2f51"
+                  uuid = "86B5470D-6482-47ED-858A-CAE02275EE67 - d33ebd51a9eb5cbb"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in ShelterManager.ResidentProfileModel.getFullAvatarUrlFrom() -&gt; ()"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in ShelterManager.ResidentProfileModel.uploadImage(imageData: Foundation.Data) -&gt; ()"
                   moduleName = "ShelterManager"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/Profile/ResidentProfileView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "138"
-                  endingLineNumber = "138"
-                  offsetFromSymbolStart = "152">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "CA058911-D69B-4F80-88B6-E16619C7E2BA"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ShelterManager/Screens/Profile/ResidentProfileView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
-            landmarkName = "init(userID:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "CA058911-D69B-4F80-88B6-E16619C7E2BA - 87b456d53d49c12"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ShelterManager.ResidentProfileModel.init(userID: Swift.String) -&gt; ShelterManager.ResidentProfileModel"
-                  moduleName = "ShelterManager"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/Profile/ResidentProfileView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "42"
-                  endingLineNumber = "42"
-                  offsetFromSymbolStart = "1200">
-               </Location>
-               <Location
-                  uuid = "CA058911-D69B-4F80-88B6-E16619C7E2BA - 87b456d53d49c12"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ShelterManager.ResidentProfileModel.init(userID: Swift.String) -&gt; ShelterManager.ResidentProfileModel"
-                  moduleName = "ShelterManager"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/Profile/ResidentProfileView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "42"
-                  endingLineNumber = "42"
-                  offsetFromSymbolStart = "1504">
+                  startingLineNumber = "125"
+                  endingLineNumber = "125"
+                  offsetFromSymbolStart = "168">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -206,8 +107,8 @@
             filePath = "ShelterManager/Screens/Profile/ResidentProfileView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "114"
-            endingLineNumber = "114"
+            startingLineNumber = "121"
+            endingLineNumber = "121"
             landmarkName = "uploadImage(imageData:)"
             landmarkType = "7">
             <Locations>
@@ -239,6 +140,51 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "114"
                   endingLineNumber = "114"
+                  offsetFromSymbolStart = "136">
+               </Location>
+               <Location
+                  uuid = "76FE8E43-2BCF-4102-80CB-66D338DA644E - 6ad5961ead46ac56"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ShelterManager.ResidentProfileModel.uploadImage(imageData: Foundation.Data) -&gt; ()"
+                  moduleName = "ShelterManager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/Profile/ResidentProfileView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "98">
+               </Location>
+               <Location
+                  uuid = "76FE8E43-2BCF-4102-80CB-66D338DA644E - 6ad5961ead46d2c5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ShelterManager.ResidentProfileModel.uploadImage(imageData: Foundation.Data) -&gt; ()"
+                  moduleName = "ShelterManager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/Profile/ResidentProfileView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "121"
+                  endingLineNumber = "121"
+                  offsetFromSymbolStart = "98">
+               </Location>
+               <Location
+                  uuid = "76FE8E43-2BCF-4102-80CB-66D338DA644E - 6ad5961ead46d2c5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ShelterManager.ResidentProfileModel.uploadImage(imageData: Foundation.Data) -&gt; ()"
+                  moduleName = "ShelterManager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/denis/XcodeProjects/ShelterApp/ShelterManager/Screens/Profile/ResidentProfileView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "121"
+                  endingLineNumber = "121"
                   offsetFromSymbolStart = "136">
                </Location>
             </Locations>

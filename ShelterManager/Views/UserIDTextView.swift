@@ -11,7 +11,7 @@ struct UserIDTextView: View {
     var id: String? = nil
     var alignment: TextAlignment = .center
     var body: some View {
-        Text(id ?? (UserEnv.current?.uid ?? "-"))
+        Text(id ?? "-")
             .frame(maxWidth: .infinity)
             .multilineTextAlignment(alignment)
             .font(.system(size: 9))

@@ -23,8 +23,9 @@ struct PhotoPickerView: View {
         }
         .onChange(of: avatarItem) {
             Task {
-                if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
-                    avatarImage = loaded
+                if let loaded = try? await avatarItem?.loadTransferable(type: Data.self) {
+                    let cont = Image(uiImage: UIImage(data: loaded)!)
+                    avatarImage = cont
                 } else {
                     print("Failed")
                 }
