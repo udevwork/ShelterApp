@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  AddressAutocomplete
-//
-//  Created by Maksim Kalik on 11/27/22.
-//
-
 import SwiftUI
 
 struct AddressAutocompleteModalView: View {
@@ -20,60 +13,71 @@ struct AddressAutocompleteModalView: View {
     
     var body: some View {
         NavigationStack {
-           
-            List {
-                if autocomplete != nil {
-                    Section ("Selected Address:"){
-                    Button {
-                        if temp_autocomplete == nil {
-                            //autocomplete = address
-                            temp_autocomplete = .init(title: viewModel.searchableText, subtitle: "")
-                        }
-                        autocomplete = temp_autocomplete
-                        dismiss()
-                    } label: {
-                        VStack(alignment: .leading) {
-                            
-                            AddressListItemView(address: temp_autocomplete).foregroundStyle(Color(uiColor: UIColor.label))
-                            
-                            Label("Apply selected address", systemImage: "checkmark.circle.fill")
-                                .padding(14).background(.gray.opacity(0.1)).cornerRadius(13)
+            ZStack {
+                List {
+                    if self.viewModel.results.isEmpty {
+                        
+                        Text("Search is empty").multilineTextAlignment(.center).frame(maxWidth: .infinity).foregroundStyle(.gray).listRowBackground(Color.clear)
+                    } else {
+                        ForEach(self.viewModel.results) { address in
+                            Button {
+                                viewModel.searchableText = address.title + " " + address.subtitle
+                                temp_autocomplete = address
+                            } label: {
+                                AddressListItemView(address: address).foregroundStyle(Color(uiColor: UIColor.label))
+                            }
                         }
                     }
-                }
-                }
-               
-                if self.viewModel.results.isEmpty {
-                    
-                    Text("Search is empty").multilineTextAlignment(.center).frame(maxWidth: .infinity).foregroundStyle(.gray).listRowBackground(Color.clear)
-                } else {
-                    ForEach(self.viewModel.results) { address in
+                }.navigationBarTitle("Search", displayMode: .large)
+                
+                    .navigationBarTitleDisplayMode(.large)
+                    .toolbar {
                         Button {
-                            viewModel.searchableText = address.title + " " + address.subtitle
-                            temp_autocomplete = address
+                            dismiss()
                         } label: {
-                            AddressListItemView(address: address).foregroundStyle(Color(uiColor: UIColor.label))
+                            Text("Close")
                         }
                     }
+                
+                VStack {
+                    Spacer()
+                    VStack {
+                        VStack(alignment: .leading, spacing: 15) {
+                            
+                            AddressListItemSmallView(address: temp_autocomplete)
+                                .foregroundStyle(Color(uiColor: UIColor.label))
+                                .frame(maxWidth: .infinity)
+                            if temp_autocomplete != nil {
+                                Button {
+                                    autocomplete = temp_autocomplete
+                                    dismiss()
+                                } label: {
+                                    
+                                    Label("Apply this address", systemImage: "checkmark.circle.fill")
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 10)
+                                        .background(.gray.opacity(0.1))
+                                        .cornerRadius(17)
+                                        .disabled((temp_autocomplete == nil))
+                                        .foregroundStyle((temp_autocomplete == nil) ? Color.gray : Color.accentColor)
+                                    
+                                }
+                            }
+                        }.padding()
+                        
+                    }.background(.ultraThinMaterial)
+                        .cornerRadius(10)
+                        .shadow(radius: 10)
+                        .padding(10)
                 }
-            }.navigationBarTitle("Search", displayMode: .large)
-            
-                .navigationBarTitleDisplayMode(.large)
-                .toolbar {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Close")
-                    }
-                }
-               
-        }
-            .searchable(text: $viewModel.searchableText, isPresented: $isFocusedTextField, placement: .navigationBarDrawer(displayMode: .always))
-            .onReceive(viewModel.$searchableText.debounce(for: .seconds(1), scheduler: DispatchQueue.main)) {
-                viewModel.searchAddress($0)
             }
+        }
+        .searchable(text: $viewModel.searchableText, isPresented: $isFocusedTextField, placement: .navigationBarDrawer(displayMode: .always))
+        .onReceive(viewModel.$searchableText.debounce(for: .seconds(1), scheduler: DispatchQueue.main)) {
+            viewModel.searchAddress($0)
+        }
         
-       
+        
     }
     
     var backgroundColor: Color = Color.init(uiColor: .systemGray6)

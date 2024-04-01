@@ -20,6 +20,7 @@ class PhotoGalleryModel: ObservableObject {
     @Published var loading: Bool = false
     @Published var fullSizeImage: URL? = nil
     @Published var isShowingFullScreen = false
+    @Published var isShowingSlider = false
     
     private let photoManager: PhotoUploaderManager
     
@@ -81,10 +82,12 @@ class PhotoGalleryModel: ObservableObject {
 
 struct PhotoGalleryView: View {
     @StateObject var model: PhotoGalleryModel
-    @State private var avatarItem: PhotosPickerItem?
-   // @State private var avatarImage: Image = Image("default-avatar")
     
+    @State private var selectedItems = [PhotosPickerItem]()
+    @State var selectedIndex = 0
+
     let imageSize = UIScreen.main.bounds.width/5
+    var editble: Bool
     
     let columns = [
         GridItem(.fixed((UIScreen.main.bounds.width/5))),
@@ -98,7 +101,7 @@ struct PhotoGalleryView: View {
         ScrollView {
             
             LazyVGrid(columns: columns, spacing: 5) {
-                ForEach(model.photos, id: \.self) { url in
+                ForEach(Array(model.photos.enumerated()), id: \.element) { index, url in
                     
                     KFImage.url(url)
                         .resizing(referenceSize: .init(width: imageSize, height: imageSize), mode: .aspectFill)
@@ -120,14 +123,16 @@ struct PhotoGalleryView: View {
                         }
 
                         .onTapGesture {
-                            self.model.getFullImageUrlFrom(url: url)
+                            //self.model.getFullImageUrlFrom(url: url)
+                            self.selectedIndex = index
+                            model.isShowingSlider.toggle()
                         }
                         .contextMenu {
                             Button {
                                 model.deleteImage(url: url)
                             } label: {
                                 Label("Delete", systemImage: "trash.fill")
-                            }
+                            }.disabled(!editble)
                         }
                         
                 }
@@ -138,31 +143,35 @@ struct PhotoGalleryView: View {
         .toolbar(content: {
             HStack {
                 Image(systemName: "plus.circle.fill")
-                PhotosPicker("Upload photo", selection: $avatarItem, matching: .images)
-                    .onChange(of: avatarItem) {
+                PhotosPicker("Upload photo", selection: $selectedItems, matching: .images)
+                    .disabled(!editble)
+                    .onChange(of: selectedItems) {
                         Task {
-                            if let loaded = try? await avatarItem?.loadTransferable(type: Data.self) {
-                                let cont = Image(uiImage: UIImage(data: loaded)!)
-                                let renderer = ImageRenderer(content: cont)
-                                let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.0 : 0.7
-                                if let data = renderer.uiImage?.jpegData(compressionQuality: compression) {
-                                    model.uploadImage(imageData: data)
+                            for item in selectedItems {
+                                if let image = try? await item.loadTransferable(type: Data.self) {
+                                    let cont = Image(uiImage: UIImage(data: image)!)
+                                    let renderer = ImageRenderer(content: cont)
+                                    let compression = UserDefaults.standard.bool(forKey: "extremeImageCompressionEnabled") ? 0.0 : 0.7
+                                    if let data = renderer.uiImage?.jpegData(compressionQuality: compression) {
+                                        model.uploadImage(imageData: data)
+                                    }
                                 }
-                            } else {
-                                print("Failed")
                             }
                         }
                     }
             }
         })
-        .sheet(isPresented: $model.isShowingFullScreen) {
-            VStack {
-                if let url = model.fullSizeImage {
-                    FullScreenImageView(url: url)
-                } else {
-                    Text("invalid url")
-                }
-            }
+//        .sheet(isPresented: $model.isShowingFullScreen) {
+//            VStack {
+//                if let url = model.fullSizeImage {
+//                    FullScreenImageView(url: url)
+//                } else {
+//                    Text("invalid url")
+//                }
+//            }
+//        }
+        .sheet(isPresented: $model.isShowingSlider) {
+            SliderGalleryImageView(urls: model.photos, selectedItem: $selectedIndex, id: model.id)
         }
         .navigationTitle("Gallery")
         

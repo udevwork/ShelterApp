@@ -28,42 +28,43 @@ struct ShelterManagerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     // Env
-    @StateObject var clipBoard = InAppClipboard()
     @StateObject var user = UserEnv()
-    
+    @StateObject var tabbarBages = TabbarBager()
+
     var body: some Scene {
         WindowGroup {
             ZStack {
-                if user.isLoading == false {
-                    if user.isLogged {
-                        if (user.isAdmin ?? false) {
-                            TabView {
-                                BuildingsListView()
-                                    .tabItem { Label("Buildings", systemImage: "building.2.fill") }
-                                ResidentsRemoteList(model: .init())
-                                    .tabItem { Label("Users", systemImage: "person.2.fill") }
-                                AdministratorProfileView()
-                                    .tabItem { Label("Admin panel", systemImage: "wrench.and.screwdriver.fill") }
-                            }
-                            .environmentObject(clipBoard)
-                            .environmentObject(user)
-                        } else {
-                            ResidentProfileView( model: .init(userID: user.id), editble: false)
-                                .environmentObject(user)
+                if user.isLogged {
+                    if (user.isAdmin ?? false) || (user.isModerator ?? false) {
+                        TabView {
+                            BuildingsListView()
+                                .tabItem { Label("Buildings", systemImage: "building.2.fill") }
+                            ResidentsRemoteList(model: .init())
+                                .tabItem { Label("Users", systemImage: "person.2.fill") }
+                            NewNotesAlertsView(model: .init(tabbarBager: tabbarBages))
+                                .tabItem { Label("Alerts", systemImage: "note.text") }
+                                .badge(tabbarBages.newNotesAlertsCount)
+                            AdministratorProfileView()
+                                .tabItem { Label("Admin panel", systemImage: "wrench.and.screwdriver.fill") }
                         }
                     } else {
-                        SignInView()
-                            .environmentObject(user)
+                        NavigationStack {
+                            ResidentProfileView( model: .init(userID: user.id), editble: false)
+                        }
                     }
                 } else {
-                    LoadingView()
+                    SignInView()
                 }
             }
+            .environmentObject(user)
+            .environmentObject(tabbarBages)
         }
     }
 }
 
-
+class TabbarBager: ObservableObject {
+    @Published var newNotesAlertsCount: Int = 0
+}
 
 
 

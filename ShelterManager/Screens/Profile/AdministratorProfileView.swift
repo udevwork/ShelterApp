@@ -178,7 +178,7 @@ struct AdministratorProfileView: View {
                 }
                 
                 
-            }.navigationTitle("Administrator")
+            }.navigationTitle(navTitle())
                 .toast(isPresenting: $model.showLoadingAlert) {
                     AlertToast(type: .loading, title: "Loading")
                 }
@@ -190,6 +190,19 @@ struct AdministratorProfileView: View {
                 }
             
         }
+    }
+    
+    func navTitle() -> String {
+        if (user.isAdmin ?? false) {
+            return "Administrator"
+        }       
+        
+        if (user.isModerator ?? false) {
+            return "Moderator"
+        }
+        
+        
+        return "Panel"
     }
 }
 

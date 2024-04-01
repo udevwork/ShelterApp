@@ -21,6 +21,7 @@ class UserEnv: ObservableObject, Identifiable {
     /// User variables
     @Published var id           : String    = ""
     @Published var isAdmin      : Bool?     = false
+    @Published var isModerator  : Bool?     = false
     @Published var userName     : String    = ""
     @Published var email        : String? = ""
     @Published var password     : String? = ""
@@ -55,6 +56,7 @@ class UserEnv: ObservableObject, Identifiable {
                     if let _u: Remote.User = try? document.decode() {
                         self.id = _u.id
                         self.isAdmin = _u.isAdmin
+                        self.isModerator = _u.isModerator
                         self.userName = _u.userName
                         self.email = _u.email
                         self.password = _u.password

@@ -54,3 +54,30 @@ struct AddressListItemView: View {
         }
     }
 }
+
+struct AddressListItemSmallView: View {
+    
+    var address: Remote.Address?
+    
+    var body: some View {
+        if let address = address {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 15 ) {
+                    Image(systemName: "map.fill")
+                    Text(address.title)
+                        .multilineTextAlignment(.leading)
+                        .bold()
+                    Spacer()
+                }
+            }
+        } else {
+            HStack(spacing: 15 ) {
+                Image(systemName: "map.fill").opacity(0.5)
+                Text("Search and select address")
+                    .multilineTextAlignment(.leading)
+                    .foregroundColor(Color(UIColor.secondaryLabel))
+                   Spacer()
+            }
+        }
+    }
+}

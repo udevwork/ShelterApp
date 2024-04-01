@@ -16,7 +16,8 @@ extension Remote {
         @Published var linkedUserIDs: [String] = []
 
         @Published var maxUsersCount: Int = 0
-        @Published var floor: Int = 0
+        @Published var floor: String = "0"
+        @Published var roomsCount: Int = 0
         @Published var squareMeters: Float = 0.0
 
         enum CodingKeys: String, CodingKey {
@@ -63,9 +64,16 @@ extension Remote {
                 maxUsersCount = data
             }
             
-            if let data = try? container.decode(Int.self, forKey: .floor) {
+            if let data = try? container.decode(String.self, forKey: .floor) {
                 floor = data
+            } else if let data = try? container.decode(Int.self, forKey: .floor) {
+                floor = String(data)
             }
+            
+            if let data = try? container.decode(Int.self, forKey: .squareMeters) {
+                roomsCount = data
+            }
+            
             if let data = try? container.decode(Float.self, forKey: .squareMeters) {
                 squareMeters = data
             }

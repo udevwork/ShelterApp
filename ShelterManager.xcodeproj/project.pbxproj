@@ -10,6 +10,7 @@
 		92075DC92B9DDD85000635F0 /* DocumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92075DC82B9DDD85000635F0 /* DocumentsView.swift */; };
 		92075DCC2B9DF35A000635F0 /* PhotoGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92075DCB2B9DF35A000635F0 /* PhotoGalleryView.swift */; };
 		920974C12B86546A004DA79A /* AlertEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920974C02B86546A004DA79A /* AlertEnv.swift */; };
+		921E8BDB2BB84B1600C46B24 /* SliderGalleryImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 921E8BDA2BB84B1600C46B24 /* SliderGalleryImageView.swift */; };
 		92411FF82B88CD7F00662791 /* RealmBackgroundHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92411FF72B88CD7F00662791 /* RealmBackgroundHelper.swift */; };
 		9265969B2B8B912B001E8922 /* CreateNewRemoteUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9265969A2B8B912B001E8922 /* CreateNewRemoteUserView.swift */; };
 		9270B6EB2B874C8E0003C7DE /* UserIDTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9270B6EA2B874C8E0003C7DE /* UserIDTextView.swift */; };
@@ -64,6 +65,7 @@
 		92C389A62B862B2C00FE69EB /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 92C389A52B862B2C00FE69EB /* FirebaseStorage */; };
 		92C389A92B862CFC00FE69EB /* PDFViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389A82B862CFC00FE69EB /* PDFViewer.swift */; };
 		92C389AB2B862F5300FE69EB /* DocumentPickerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C389AA2B862F5300FE69EB /* DocumentPickerRepresentable.swift */; };
+		92C4151A2BBAC1EE003F2A90 /* NewNotesAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C415192BBAC1EE003F2A90 /* NewNotesAlerts.swift */; };
 		92F0EFBB2B99F94500F9BA51 /* RemoteUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFBA2B99F94500F9BA51 /* RemoteUser.swift */; };
 		92F0EFBD2B99F98B00F9BA51 /* RemoteBuilding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFBC2B99F98B00F9BA51 /* RemoteBuilding.swift */; };
 		92F0EFBF2B99F99300F9BA51 /* RemoteAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F0EFBE2B99F99300F9BA51 /* RemoteAddress.swift */; };
@@ -83,6 +85,7 @@
 		92075DC82B9DDD85000635F0 /* DocumentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsView.swift; sourceTree = "<group>"; };
 		92075DCB2B9DF35A000635F0 /* PhotoGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGalleryView.swift; sourceTree = "<group>"; };
 		920974C02B86546A004DA79A /* AlertEnv.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertEnv.swift; sourceTree = "<group>"; };
+		921E8BDA2BB84B1600C46B24 /* SliderGalleryImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderGalleryImageView.swift; sourceTree = "<group>"; };
 		92411FF72B88CD7F00662791 /* RealmBackgroundHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmBackgroundHelper.swift; sourceTree = "<group>"; };
 		9265969A2B8B912B001E8922 /* CreateNewRemoteUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewRemoteUserView.swift; sourceTree = "<group>"; };
 		9270B6EA2B874C8E0003C7DE /* UserIDTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIDTextView.swift; sourceTree = "<group>"; };
@@ -127,6 +130,7 @@
 		92C389A82B862CFC00FE69EB /* PDFViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewer.swift; sourceTree = "<group>"; };
 		92C389AA2B862F5300FE69EB /* DocumentPickerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPickerRepresentable.swift; sourceTree = "<group>"; };
 		92C389AC2B86327100FE69EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		92C415192BBAC1EE003F2A90 /* NewNotesAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewNotesAlerts.swift; sourceTree = "<group>"; };
 		92F0EFBA2B99F94500F9BA51 /* RemoteUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteUser.swift; sourceTree = "<group>"; };
 		92F0EFBC2B99F98B00F9BA51 /* RemoteBuilding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteBuilding.swift; sourceTree = "<group>"; };
 		92F0EFBE2B99F99300F9BA51 /* RemoteAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteAddress.swift; sourceTree = "<group>"; };
@@ -180,6 +184,7 @@
 				92075DCB2B9DF35A000635F0 /* PhotoGalleryView.swift */,
 				927602E22B9F5F820044FC41 /* FullScreenImageView.swift */,
 				92FCC26F2BA1F0B00065B121 /* PhotoUploaderManager.swift */,
+				921E8BDA2BB84B1600C46B24 /* SliderGalleryImageView.swift */,
 			);
 			path = ImageGalleryView;
 			sourceTree = "<group>";
@@ -239,6 +244,7 @@
 		92C3893C2B7BD6BF00FE69EB /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				92C415182BBAC1C7003F2A90 /* NewNotesView */,
 				92075DCA2B9DF345000635F0 /* ImageGalleryView */,
 				92075DC72B9DDD6F000635F0 /* DocumentsView */,
 				92F0EFCC2B9CB9B500F9BA51 /* PhotoPickerView */,
@@ -247,7 +253,7 @@
 				927257AD2BA715780073A513 /* UserNotesView */,
 				92C3898F2B8367AA00FE69EB /* Profile */,
 				92C389642B7E492600FE69EB /* AddressChooser */,
-				92C3895C2B7D07F800FE69EB /* Resident.Details */,
+				92C3895C2B7D07F800FE69EB /* Resident.Details.deprecated */,
 				92C3895B2B7D07E200FE69EB /* LivingSpace.Details */,
 				92C389462B7C10B500FE69EB /* Building.Details */,
 				92C3893D2B7BD6CC00FE69EB /* Home.BuildingsList */,
@@ -312,14 +318,12 @@
 			path = LivingSpace.Details;
 			sourceTree = "<group>";
 		};
-		92C3895C2B7D07F800FE69EB /* Resident.Details */ = {
+		92C3895C2B7D07F800FE69EB /* Resident.Details.deprecated */ = {
 			isa = PBXGroup;
 			children = (
 				92C3895F2B7D085E00FE69EB /* ResidentDetails.swift */,
-				92C389A32B860BCB00FE69EB /* ResidentsRemoteList.swift */,
-				92F0EFCA2B9B35B100F9BA51 /* ResidentRemoteListSelectionView.swift */,
 			);
-			path = Resident.Details;
+			path = Resident.Details.deprecated;
 			sourceTree = "<group>";
 		};
 		92C389642B7E492600FE69EB /* AddressChooser */ = {
@@ -376,6 +380,8 @@
 				9265969A2B8B912B001E8922 /* CreateNewRemoteUserView.swift */,
 				92C3899C2B83A63D00FE69EB /* ResidentProfileView.swift */,
 				92C389A12B8605BB00FE69EB /* AdministratorProfileView.swift */,
+				92C389A32B860BCB00FE69EB /* ResidentsRemoteList.swift */,
+				92F0EFCA2B9B35B100F9BA51 /* ResidentRemoteListSelectionView.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -412,6 +418,14 @@
 				92C389AA2B862F5300FE69EB /* DocumentPickerRepresentable.swift */,
 			);
 			path = PDFViewer;
+			sourceTree = "<group>";
+		};
+		92C415182BBAC1C7003F2A90 /* NewNotesView */ = {
+			isa = PBXGroup;
+			children = (
+				92C415192BBAC1EE003F2A90 /* NewNotesAlerts.swift */,
+			);
+			path = NewNotesView;
 			sourceTree = "<group>";
 		};
 		92F0EFB92B99F93700F9BA51 /* Remote */ = {
@@ -548,6 +562,7 @@
 				92075DC92B9DDD85000635F0 /* DocumentsView.swift in Sources */,
 				92C389312B7BD68600FE69EB /* BuildingsListView.swift in Sources */,
 				92F0EFBB2B99F94500F9BA51 /* RemoteUser.swift in Sources */,
+				921E8BDB2BB84B1600C46B24 /* SliderGalleryImageView.swift in Sources */,
 				92C389AB2B862F5300FE69EB /* DocumentPickerRepresentable.swift in Sources */,
 				92F0EFD32B9CD8CC00F9BA51 /* FullScreenImageModifier.swift in Sources */,
 				9265969B2B8B912B001E8922 /* CreateNewRemoteUserView.swift in Sources */,
@@ -582,6 +597,7 @@
 				92FCC2702BA1F0B00065B121 /* PhotoUploaderManager.swift in Sources */,
 				92FCC26E2BA095BB0065B121 /* TextInput.swift in Sources */,
 				9270B6EB2B874C8E0003C7DE /* UserIDTextView.swift in Sources */,
+				92C4151A2BBAC1EE003F2A90 /* NewNotesAlerts.swift in Sources */,
 				92C389482B7C10D700FE69EB /* BuildingDetailView.swift in Sources */,
 				92C389452B7BFAE200FE69EB /* BuildingListItemView.swift in Sources */,
 				92C389A92B862CFC00FE69EB /* PDFViewer.swift in Sources */,
@@ -733,7 +749,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShelterManager/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "New Green Home";
+				INFOPLIST_KEY_CFBundleDisplayName = "Green Home";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "Documents uploading";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -745,7 +761,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ShelterManager.iosapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -767,7 +783,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShelterManager/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "New Green Home";
+				INFOPLIST_KEY_CFBundleDisplayName = "Green Home";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "Documents uploading";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -779,7 +795,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ShelterManager.iosapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

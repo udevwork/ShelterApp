@@ -16,7 +16,9 @@ import Kingfisher
 
 class ResidentProfileModel: ObservableObject {
     
-    @Published var user: Remote.User = Remote.User()
+    @Published var user: Remote.User = .init()
+    var backupUser: Remote.User = .init()
+    @Published var originalUser: Remote.User? = nil
     
     @Published var livingSpace: Remote.LivingSpace? = nil
     @Published var address: Remote.Address? = nil
@@ -33,34 +35,44 @@ class ResidentProfileModel: ObservableObject {
     @Published var isShowingFullScreen = false
     var photoManager: PhotoUploaderManager
     
+    // if loading from users list
     init(user: Remote.User) {
-        self.user = user
+        print("FETCH USER: \(user.userName)")
+        self.originalUser = user
+        self.user = user.copy()
+        self.backupUser = user.copy()
         photoManager = PhotoUploaderManager(id: user.id)
         fetchLinkedUserDate()
     }
     
+    // if logged as regular user
     init(userID: String) {
         showLoadingAlert = true
-        photoManager = PhotoUploaderManager(id: userID)
-        let path = Fire.base.users.document(userID)
-        path.getDocument { snap, error in
-            if let error = error {
-                print("Ошибка при получении пользователей: \(error.localizedDescription)")
-            } else {
-                do {
-                    if let snap = snap {
-                        self.user = try snap.decode()
-                        self.fetchLinkedUserDate()
-                    } else {
-                        try? Auth.auth().signOut()
-                    }
-                } catch let error {
-                    print(error.localizedDescription)
-                    try? Auth.auth().signOut()
-                }
+        
+        var _id: String = userID
+        // Проверяем, есть ли постфикс '-user'
+        if userID.hasSuffix("-user") {
+            // Удаляем постфикс '-user'
+            _id = userID.replacingOccurrences(of: "-user", with: "")
+
+        }
+        
+        photoManager = PhotoUploaderManager(id: _id)
+        let path = Fire.base.users.document(_id)
+        
+        Task {
+            do {
+                let doc = try await path.getDocument()
+                self.user = try doc.decode()
+                self.backupUser = self.user.copy()
+                self.fetchLinkedUserDate()
+            } catch let error {
+                print(error.localizedDescription)
+                self.showLoadingAlert = false
+                self.errorAlertText = error.localizedDescription
+                self.showErrorAlert = true
             }
         }
-       
     }
     
     func fetchLinkedUserDate() {
@@ -88,29 +100,67 @@ class ResidentProfileModel: ObservableObject {
     
     func saveData() {
         
+        if let orig = originalUser {
+            orig.userName = user.userName
+        }
+        
         let id = user.id
         let userRef = Fire.base.users.document(id)
         
         let data = user.toDictionary()
         
         Task {
+            
+            if backupUser.userName != (user.userName ?? "") {
+                if await user.userName.isUniqUsername() == false {
+                    self.errorAlertText = "Name invalid!"
+                    self.showErrorAlert = true
+                    return
+                }
+            }
+            
             try? await userRef.setData(data)
+            self.showAlert = true
         }
-        showAlert.toggle()
+       
     }
     
     func updateCredits() {
-        
-        let id = user.id
-        let userRef = Fire.base.users.document(id)
-    
-        guard let email = user.email, let password = user.password else {
-            errorAlertText = "Filds cannot be empty"
-            showErrorAlert = true
-            return
-        }
-        
         Task {
+            if (user.email ?? "").isValidEmail() == false {
+                self.errorAlertText = "invalid email"
+                self.showErrorAlert = true
+                self.showAlert = false
+                return
+            }
+            
+            if (user.password ?? "").isValidPassword() == false  {
+                self.errorAlertText = "invalid password"
+                self.showErrorAlert = true
+                self.showAlert = false
+                return
+            }
+            
+            if backupUser.email != (user.email ?? "") {
+                if await (user.email ?? "").isUniqEmail() == false {
+                    self.errorAlertText = "Email is already taken!"
+                    self.showErrorAlert = true
+                    self.showAlert = false
+                    return
+                }
+            }
+            
+            
+            let id = user.id
+            let userRef = Fire.base.users.document(id)
+            
+            guard let email = user.email, let password = user.password else {
+                errorAlertText = "Filds cannot be empty"
+                showErrorAlert = true
+                return
+            }
+            
+            
             try? await userRef.updateData(["email":email, "password": password])
         }
         showAlert.toggle()
@@ -127,9 +177,12 @@ class ResidentProfileModel: ObservableObject {
     }
     
     func getThumbnaliAvatarUrl() {
+        if avatarUrl != nil {
+            return
+        }
         Task {
             self.avatarUrl = try await photoManager.loadAvatar()
-        }        
+        }
     }
     
     func getFullAvatarUrlFrom() {
@@ -148,7 +201,7 @@ class ResidentProfileModel: ObservableObject {
         }
     }
     
-  
+    
 }
 
 struct ResidentProfileView: View {
@@ -156,15 +209,17 @@ struct ResidentProfileView: View {
     @StateObject var model: ResidentProfileModel
     @EnvironmentObject var userEnv: UserEnv
     @State private var isPickerPresented = false
-
+    
     
     @State private var avatarItem: PhotosPickerItem?
+    
+    //@Binding var user: Remote.User
     
     var editble: Bool
     
     var body: some View {
-
-        if model.user.id.isEmpty == false {
+        
+    
             List {
                 HStack(alignment: .center) {
                     Spacer()
@@ -206,19 +261,19 @@ struct ResidentProfileView: View {
                     TextInput(text: $model.user.userName,
                               title: "Name: ",
                               systemImage: "pencil").disabled(!editble)
-                   
+                    
                     
                     TextInput(text: $model.user.socialSecurityNumber,
                               title: "Security №: ",
                               systemImage: "exclamationmark.shield.fill").disabled(!editble)
-          
+                    
                     TextInput(text: $model.user.mobilePhone,
                               title: "Phone: ",
                               systemImage: "phone.fill").disabled(!editble)
                     
                     
                     
-                    //  Text("Date is \(birthDate.formatted(date: .long, time: .omitted))")
+//                      Text("Date is \(birthDate.formatted(date: .long, time: .omitted))")
                     if editble {
                         HStack {
                             Image(systemName: "birthday.cake.fill")
@@ -230,35 +285,60 @@ struct ResidentProfileView: View {
                         HStack {
                             Image(systemName: "birthday.cake.fill")
                             Text("Birthday is \(model.user.dateOfBirth.formatted(date: .long, time: .omitted))")
-                           
                         }
+                    }
+                    
+                    if (userEnv.isAdmin ?? false) || (userEnv.isModerator ?? false) {
+                        Toggle(isOn: $model.user.isAdmin ?? false, label:  {
+                            Label("Administrator", systemImage: "exclamationmark.circle.fill")
+                        }).disabled((userEnv.isAdmin ?? false) == false)
+                        Toggle(isOn: $model.user.isModerator ?? false, label:  {
+                            Label("Moderator", systemImage: "exclamationmark.circle.fill")
+                        }).disabled((userEnv.isAdmin ?? false) == false)
                     }
                     
                     if editble {
                         Button {
                             model.saveData()
                             UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                            self.model.showAlert.toggle()
                         } label: {
                             Label("Save", systemImage: "icloud.and.arrow.up.fill")
                         }
                     }
                 }
-                if editble {
-                    Section("Files") {
+                
+                Section("Files") {
+                    
+                    NavigationLink {
+                        DocumentsView(model: .init(id: model.user.id),
+                                      editble: (userEnv.isAdmin ?? false) || (model.user.id == userEnv.id) )
+                    } label: {
+                        Label("Documents", systemImage: "doc.on.doc.fill")
+                    }.foregroundColor(Color(UIColor.label))
+                    
+                }
+                
+                
+                if  (userEnv.isAdmin ?? false) ||  (userEnv.isModerator ?? false) {
+                    Section("Administration notes") {
                         NavigationLink {
-                            DocumentsView(model: .init(id: model.user.id), editble: editble)
+                            UserNotesView(model: .init(id: model.user.id, type: .admin, authorName: userEnv.userName),
+                                          editble:  (userEnv.isAdmin ?? false))
                         } label: {
-                            Label("Documents", systemImage: "doc.on.doc.fill")
-                        }.foregroundColor(Color(UIColor.label))
-                        
-                        NavigationLink {
-                            UserNotesView(model: .init(id: model.user.id), editble: editble)
-                        } label: {
-                            Label("Notes", systemImage: "note.text")
+                            Label("Annotations", systemImage: "pencil.and.list.clipboard")
                         }.foregroundColor(Color(UIColor.label))
                     }
                 }
+                
+                Section("User notes") {
+                    NavigationLink {
+                        UserNotesView(model: .init(id: model.user.id, type: .user, authorName: model.user.userName),
+                                      editble: (userEnv.isAdmin ?? false) || (model.user.id == userEnv.id) )
+                    } label: {
+                        Label("Notes", systemImage: "note.text")
+                    }.foregroundColor(Color(UIColor.label))
+                }
+                
                 
                 if editble {
                     Section("Login info") {
@@ -295,7 +375,7 @@ struct ResidentProfileView: View {
             .navigationTitle("Profile")
             .toolbar(content: {
                 PhotosPicker("Change avatar", selection: $avatarItem, matching: .images)
-                    //.disabled(!editble)
+                .disabled(!editble)
                     .onChange(of: avatarItem)  {
                         Task {
                             if let loaded = try? await avatarItem?.loadTransferable(type: Data.self) {
@@ -339,14 +419,10 @@ struct ResidentProfileView: View {
             }
             
             
-        }
+      
         
     }
     
     
     
 }
-//
-//#Preview {
-//    ResidentProfileView(model: .init(user: Remote.User.init(id: "", userName: "Denis Kotelnikov")))
-//}

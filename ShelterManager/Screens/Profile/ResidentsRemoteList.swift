@@ -31,14 +31,24 @@ class ResidentsRemoteListModel: ObservableObject {
         Task { [ref] in
             let docs = try await ref.getDocuments()
             let decoded : [Remote.User] = try docs.decode()
+            let sorted = decoded.sorted(by: {
+                let one_comonents = $0.userName.components(separatedBy: " ")
+                let two_comonents = $1.userName.components(separatedBy: " ")
+                
+                if one_comonents.count < 2 && two_comonents.count < 2 {
+                    return false
+                }
+                
+                let one = one_comonents[1]
+                let two = two_comonents[1]
+                return one < two
+            })
+            
             DispatchQueue.main.async {
-                self.users = decoded
+                self.users = sorted
                 self.objectWillChange.send()
             }
-         
-    
         }
-        
     }
     
     func search(by text: String) {
@@ -99,21 +109,23 @@ class ResidentsRemoteListModel: ObservableObject {
 }
 
 struct ResidentsRemoteList: View {
- 
+    @EnvironmentObject var user: UserEnv
     @StateObject var model: ResidentsRemoteListModel
-    @State private var searchIsActive = true
-    @State private var showCreateUser = false
+    @State private var searchIsActive = false
     
     var body: some View {
         NavigationStack {
             List {
                 
                 if model.id == nil {
-                    Button {
-                        showCreateUser = true
+                    NavigationLink {
+                        CreateNewRemoteUserView(onUserCreate: { newUser in
+                            model.users.append(newUser)
+                        })
                     } label: {
                         Label("Create new User", systemImage: "plus.circle.fill")
-                    }
+                    }.disabled(user.isAdmin == false)
+
                 } else {
                     HStack(spacing: 3) {
                         Label("Residents count: \(model.users.count)", systemImage: "person.3.fill")
@@ -125,28 +137,28 @@ struct ResidentsRemoteList: View {
                     if model.searchText.isEmpty {
                         ForEach($model.users, id: \.foreachid) { $obj in
                             NavigationLink {
-                                ResidentProfileView(model: ResidentProfileModel(user: obj), editble: true)
+                                ResidentProfileView(model: ResidentProfileModel(user: obj), editble: user.isAdmin ?? false)
                             } label: {
-                                ResidentListItemView(model: .init(residentID: obj.id), resident: obj).contextMenu {
+                                ResidentListItemView(model: .init(residentID: obj.id), resident: $obj).contextMenu {
                                     Button {
                                         model.deleteRemoteUser(user: obj)
                                     } label: {
                                         Label("Delete", systemImage: "trash.fill")
-                                    }
+                                    }.disabled(user.isAdmin == false)
                                 }
                             }
                         }
                     } else {
-                        ForEach(model.searchResultusers) { obj in
+                        ForEach($model.searchResultusers) { $obj in
                             NavigationLink {
-                                ResidentProfileView(model: ResidentProfileModel(user: obj), editble: true)
+                                ResidentProfileView(model: ResidentProfileModel(user: obj), editble: user.isAdmin ?? false)
                             } label: {
-                                ResidentListItemView(model: .init(residentID: obj.id), resident: obj).contextMenu {
+                                ResidentListItemView(model: .init(residentID: obj.id), resident: $obj).contextMenu {
                                     Button {
                                         model.deleteRemoteUser(user: obj)
                                     } label: {
                                         Label("Delete", systemImage: "trash.fill")
-                                    }
+                                    }.disabled(user.isAdmin == false)
                                 }
                             }
                         }
@@ -155,7 +167,7 @@ struct ResidentsRemoteList: View {
                     
                 } header: {
                     HStack(spacing: 10) {
-                        Text("All accounts list")
+                        Text("All accounts list. Total: \(model.users.count)")
                        
                     }
                 } footer: {
@@ -170,19 +182,11 @@ struct ResidentsRemoteList: View {
                 self.model.search(by: $0)
             }
 
-            .sheet(isPresented: $showCreateUser, onDismiss: {
-                model.loadUsers()
-            }, content: {
-                CreateNewRemoteUserView(onUserCreate: { newUser in
-                    model.users.append(newUser)
-                })
-            })
      
             .navigationTitle("Users")
+            .onAppear {
+                model.objectWillChange.send()
+            }
         }
     }
 }
-//
-//#Preview {
-//    ResidentsRemoteList(model: ResidentsRemoteListModel)
-//}

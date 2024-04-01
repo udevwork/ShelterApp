@@ -17,6 +17,7 @@ struct CreateNewRemoteUserView: View {
     
     @State var email = ""
     @State var password = ""
+    @State var name = ""
     
     @State var alertText = ""
     @State var toast = false
@@ -24,12 +25,18 @@ struct CreateNewRemoteUserView: View {
     @State var showUserEditor: Bool? = nil
     @State var newUser: Remote.User? = nil
     
-    var onUserCreate: (Remote.User)->()
+    @State var isLoading: Bool = false
     
+    var onUserCreate: (Remote.User)->()
+
     var body: some View {
         NavigationStack {
             List {
                 Section {
+                    HStack {
+                        Image(systemName: "pencil.line")
+                        TextField("Name", text: $name)
+                    }
                     HStack {
                         Image(systemName: "envelope.fill")
                         TextField("Email", text: $email)
@@ -38,15 +45,27 @@ struct CreateNewRemoteUserView: View {
                     }
                     HStack {
                         Image(systemName: "lock.fill")
-                        SecureField("Password", text: $password)
+                        TextField("Password", text: $password)
                     }
                 } footer: {
                     Text("Account credentials")
                 }
 
                 Section {
-                    Button(action: create) {
-                        Label("Create account", systemImage: "person.crop.circle.badge.plus.fill")
+                    if isLoading == false {
+                        Button(action: {
+                            Task {
+                                await self.create()
+                            }
+                        }) {
+                            Label("Create account", systemImage: "person.crop.circle.badge.plus.fill")
+                        }
+                    } else {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
                     }
                 }
             }
@@ -58,35 +77,71 @@ struct CreateNewRemoteUserView: View {
             }
         }
         .toast(isPresenting: $toast) {
-            AlertToast(displayMode: .alert, type: .regular, title: self.alertText)
+            AlertToast(displayMode: .alert, type: .error(.red), title: self.alertText)
         }
     }
 
-    func create() {
+ 
+    func create() async {
         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-
+        isLoading = true
+        
+        if email.isValidEmail() == false {
+            self.alertText = "invalid email"
+            self.toast = true
+            self.isLoading = false
+            return
+        }
+        
+        if password.isValidPassword() == false  {
+            self.alertText = "invalid password"
+            self.toast = true
+            self.isLoading = false
+            return
+        }
+        
+        if name.isValidName() == false  {
+            self.alertText = "invalid name"
+            self.toast = true
+            self.isLoading = false
+            return
+        }
+        
+        if await name.isUniqUsername() == false {
+            self.alertText = "User is already created!"
+            self.toast = true
+            self.isLoading = false
+            return
+        }
+        
+        if await email.isUniqEmail() == false {
+            self.alertText = "Email is already taken!"
+            self.toast = true
+            self.isLoading = false
+            return
+        }
+        
         let newUser = Remote.User()
         newUser.isAdmin = false
-        newUser.userName = "New user"
+        newUser.userName = name
         newUser.email = email
         newUser.password = password
         
         let documentReference = Fire.base.users.document(newUser.id)
-        
-        documentReference.setData(newUser.toDictionary()) { err in
-            if let err = err {
-                print("Ошибка при добавлении документа: \(err)")
-                self.alertText = "Error"
-                self.toast.toggle()
-            } else {
-                self.newUser = newUser
-                onUserCreate(newUser)
-                print("Документ успешно добавлен с кастомным ID: \(newUser.id)")
-            }
+        do {
+            try await documentReference.setData(newUser.toDictionary())
+            self.isLoading = false
+            print("Документ успешно добавлен с кастомным ID: \(newUser.id)")
+            self.newUser = newUser
+            onUserCreate(newUser)
+            self.showUserEditor = true
+        } catch let err {
+            self.isLoading = false
+            print("Ошибка при добавлении документа: \(err.localizedDescription)")
+            self.alertText = "Error"
+            self.toast.toggle()
         }
-        
     }
-
 }
 
 #Preview {

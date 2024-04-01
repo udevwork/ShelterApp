@@ -19,6 +19,12 @@ class LivingSpaceDetailsModel: ObservableObject {
         self.onUpdate = onUpdate
        
         fetch()
+        
+
+//        let fl = Float(String(format:"%.2f", model.livingSpace.squareMeters)) ?? 0.0
+//        print(fl)
+//        model.livingSpace.squareMeters = fl
+        
     }
     
     func fetch() {
@@ -29,6 +35,41 @@ class LivingSpaceDetailsModel: ObservableObject {
             DispatchQueue.main.async {
                 self.users = try! snap.decode()
             }
+        }
+    }
+    
+    func unlinkUser(_ user: Remote.User, completion: @escaping ()->()) {
+        self.users.removeAll { _ in
+            return false
+        }
+        
+        Task {
+            // detatch from old place FIRST!
+            if let id = user.linkedBuildingID, !id.isEmpty {
+                let oldBuilding = Fire.base.buildings.document(id)
+                try? await oldBuilding.updateData(["linkedUsersIDs": FieldValue.arrayRemove([user.id])])
+            }
+            if let id = user.linkedLivingspaceID, !id.isEmpty {
+                let oldLivingSpace = Fire.base.livingSpaces.document(id)
+                try? await oldLivingSpace.updateData(["linkedUserIDs": FieldValue.arrayRemove([user.id])])
+            }
+            
+            
+            user.linkedAddressID = ""
+            user.linkedBuildingID = ""
+            user.linkedLivingspaceID = ""
+            
+            // UPDATE SHORT ADDRESS
+
+            user.shortLivingSpaceLabel = ""
+            user.shortAddressLabel = ""
+            
+            let userRef = Fire.base.users.document(user.id)
+            let userData = user.toDictionary()
+        
+            try? await userRef.setData(userData)
+            self.fetch()
+            completion()
         }
     }
     
@@ -76,12 +117,7 @@ class LivingSpaceDetailsModel: ObservableObject {
             
             let buildingRef = Fire.base.buildings.document(building.id)
             let buildingData = building.toDictionary()
-//            
-//            DispatchQueue.main.async {
-//                self.users.append(user)
-//            }
-//           
-//            
+
             try? await userRef.setData(userData)
             try? await roomRef.setData(roomData)
             try? await buildingRef.setData(buildingData)
@@ -124,7 +160,8 @@ class LivingSpaceDetailsModel: ObservableObject {
 }
 
 struct LivingSpaceDetails: View {
-    
+    @EnvironmentObject var user: UserEnv
+
     @StateObject var model: LivingSpaceDetailsModel
     @StateObject var buildingModel: BuildingDetailModel
     @State var showModel: Bool = false
@@ -136,13 +173,15 @@ struct LivingSpaceDetails: View {
             Section {
                 
                 TextInput(text: $model.livingSpace.number,
-                          title: "Room №: ")
-                TextInput(num: $model.livingSpace.floor,
-                          title: "Floor: ")
+                          title: "№: ").disabled(user.isAdmin == false)
+                TextInput(text: $model.livingSpace.floor,
+                          title: "Floor: ").disabled(user.isAdmin == false)
                 TextInput(num: $model.livingSpace.maxUsersCount,
-                          title: "Max residents: ")
+                          title: "Max residents: ").disabled(user.isAdmin == false)
                 TextInput(num: $model.livingSpace.squareMeters,
-                          title: "m2: ")
+                          title: "m2: ").disabled(user.isAdmin == false)
+                TextInput(num: $model.livingSpace.roomsCount,
+                          title: "Rooms: ").disabled(user.isAdmin == false)
                 
                 Button {
                     model.saveData()
@@ -150,22 +189,22 @@ struct LivingSpaceDetails: View {
                     self.showAlert.toggle()
                 } label: {
                     Label("Save", systemImage: "icloud.and.arrow.up.fill")
-                }
+                }.disabled(user.isAdmin == false)
             }
             
             Section("Files") {
                 NavigationLink {
-                    DocumentsView(model: .init(id: model.livingSpace.id), editble: true)
+                    DocumentsView(model: .init(id: model.livingSpace.id), editble: user.isAdmin ?? false)
                 } label: {
                     Label("Documents", systemImage: "doc.on.doc.fill")
                 }
                 NavigationLink {
-                    PhotoGalleryView(model: .init(id: model.livingSpace.id))
+                    PhotoGalleryView(model: .init(id: model.livingSpace.id), editble: user.isAdmin ?? false)
                 } label: {
                     Label("Photos", systemImage: "photo.on.rectangle.angled")
                 }
                 NavigationLink {
-                    UserNotesView(model: .init(id: model.livingSpace.id), editble: true)
+//                    UserNotesView(model: .init(id: model.livingSpace.id), editble: user.isAdmin ?? false)
                 } label: {
                     Label("Notes", systemImage: "note.text")
                 }.foregroundColor(Color(UIColor.label))
@@ -175,9 +214,17 @@ struct LivingSpaceDetails: View {
                 ForEach($model.users) { $obj in
                     
                     NavigationLink {
-                        ResidentProfileView(model: ResidentProfileModel(user: obj), editble: true)
+                        ResidentProfileView(model: ResidentProfileModel(user: obj), editble: user.isAdmin ?? false)
                     } label: {
-                        ResidentListItemView(model: .init(residentID: obj.id), resident: obj)
+                        ResidentListItemView(model: .init(residentID: obj.id), resident: $obj)
+                    }.contextMenu {
+                        Button(action: {
+                            model.unlinkUser(obj, completion: {
+                                buildingModel.update()
+                            })
+                        }, label: {
+                            Label("Unlink user", systemImage: "minus.circle.fill")
+                        }).disabled(user.isAdmin == false)
                     }
                     
                 }
@@ -186,7 +233,7 @@ struct LivingSpaceDetails: View {
                     self.showModel.toggle()
                 } label: {
                     Label("Link user", systemImage: "plus.circle.fill")
-                }
+                }.disabled(user.isAdmin == false)
             }
         }
         .navigationTitle("Living space")
@@ -203,6 +250,9 @@ struct LivingSpaceDetails: View {
         .scrollDismissesKeyboard(.interactively)
         .refreshable {
             model.fetch()
+        }
+        .onAppear {
+            model.objectWillChange.send()
         }
 
     }

@@ -65,6 +65,13 @@ struct TextInput: View {
         type = .float
     }
     
+    private let decimalFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 2
+        return formatter
+    }()
+    
     var body: some View {
         HStack {
             if let systemImage = systemImage {
@@ -82,11 +89,11 @@ struct TextInput: View {
             }
             
             if type == .number {
-                TextField(placeholder, value: $num, format: .number).keyboardType(.decimalPad).bold()
+                TextField(placeholder, value: $num, formatter: decimalFormatter).keyboardType(.decimalPad).bold()
             }
             
             if type == .float {
-                TextField(placeholder, value: $num_float, format: .number).keyboardType(.decimalPad).bold()
+                TextField(placeholder, value: $num_float, formatter: decimalFormatter).keyboardType(.decimalPad).bold()
             }
 
         }

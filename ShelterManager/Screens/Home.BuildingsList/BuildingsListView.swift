@@ -86,11 +86,11 @@ class BuildingsListModel: ObservableObject {
     func delete(building: Remote.Building){
         
         let deletedBuildingID = building.id
-        Fire.base.livingSpaces.document(deletedBuildingID).delete()
         let batch = Fire.base.db.batch() 
-        
-
+    
         Task {
+            batch.deleteDocument(Fire.base.buildings.document(deletedBuildingID))
+            
             let usersSnap = try await Fire.base.users.whereField("linkedBuildingID", isEqualTo: deletedBuildingID).getDocuments().documents
             
             var _userIDs: [String] = []
@@ -137,6 +137,8 @@ class BuildingsListModel: ObservableObject {
 
 struct BuildingsListView: View {
     
+    @EnvironmentObject var user: UserEnv
+
     @StateObject var model = BuildingsListModel()
     @State private var path = NavigationPath()
     @State private var searchIsActive = false
@@ -153,7 +155,7 @@ struct BuildingsListView: View {
                         self.showToast.toggle()
                     } label: {
                         Label("Add building", systemImage: "plus.circle.fill")
-                    }
+                    }.disabled(user.isAdmin == false)
                 }
                 
                 Section  {
@@ -168,7 +170,7 @@ struct BuildingsListView: View {
                                         model.delete(building: obj)
                                     } label: {
                                         Label("Delete", systemImage: "trash.fill")
-                                    }
+                                    }.disabled(user.isAdmin == false)
                                 }
                         }
                     }

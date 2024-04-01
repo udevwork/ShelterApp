@@ -14,6 +14,7 @@ extension Remote {
         @Published var foreachid    : String    = UUID().uuidString
         @Published var id           : String    = ""
         @Published var isAdmin      : Bool?     = false
+        @Published var isModerator  : Bool?     = false
         @Published var userName     : String    = ""
         @Published var email        : String? = ""
         @Published var password     : String? = ""
@@ -32,6 +33,7 @@ extension Remote {
             case id         = "id"
             case userName   = "userName"
             case admin      = "admin"
+            case moderator  = "moderator"
             case dateOfBirth = "dateOfBirth"
             case socialSecurityNumber = "socialSecurityNumber"
             case mobilePhone = "mobilePhone"
@@ -59,6 +61,7 @@ extension Remote {
             id = try container.decode(String.self, forKey: .id)
             userName = try container.decode(String.self, forKey: .userName)
             isAdmin = try? container.decode(Bool?.self, forKey: .admin) ?? false
+            isModerator = try? container.decode(Bool?.self, forKey: .moderator) ?? false
             linkedLivingspaceID = try? container.decode(String?.self, forKey: .linkedLivingspaceID)
             linkedAddressID = try? container.decode(String?.self, forKey: .linkedAddressID)
             linkedBuildingID = try? container.decode(String?.self, forKey: .linkedBuildingID)
@@ -93,6 +96,7 @@ extension Remote {
             try container.encode(id, forKey: .id)
             try container.encode(userName, forKey: .userName)
             try container.encode(isAdmin, forKey: .admin)
+            try container.encode(isModerator, forKey: .moderator)
             try container.encode(linkedLivingspaceID, forKey: .linkedLivingspaceID)
             try container.encode(linkedAddressID, forKey: .linkedAddressID)
             try container.encode(linkedBuildingID, forKey: .linkedBuildingID)
@@ -110,6 +114,25 @@ extension Remote {
         }
         func isEmpty() -> Bool {
             return fullName().isEmpty
+        }
+        func copy() -> Remote.User {
+            let copy = Remote.User()
+            copy.foreachid = self.foreachid
+            copy.id = self.id
+            copy.isAdmin = self.isAdmin
+            copy.isModerator = self.isModerator
+            copy.userName = self.userName
+            copy.email = self.email
+            copy.password = self.password
+            copy.dateOfBirth = self.dateOfBirth
+            copy.socialSecurityNumber = self.socialSecurityNumber
+            copy.mobilePhone = self.mobilePhone
+            copy.linkedLivingspaceID = self.linkedLivingspaceID
+            copy.linkedAddressID = self.linkedAddressID
+            copy.linkedBuildingID = self.linkedBuildingID
+            copy.shortAddressLabel = self.shortAddressLabel
+            copy.shortLivingSpaceLabel = self.shortLivingSpaceLabel
+            return copy
         }
     }
 }

@@ -17,13 +17,13 @@ class ResidentListItemViewModel: ObservableObject {
                 }
             }
         }
-    }
+    }    
 }
 
 struct ResidentListItemView: View {
     
     @ObservedObject var model: ResidentListItemViewModel
-    @State var resident: Remote.User
+    @Binding var resident: Remote.User
 
     var body: some View {
         VStack(alignment: .leading) {

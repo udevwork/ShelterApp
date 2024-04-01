@@ -11,15 +11,51 @@ import FirebaseCore
 import FirebaseFirestore
 import AlertToast
 
+class SignInViewModel: ObservableObject {
+    @Published var alertText = ""
+    @Published var toast = false
+    @Published var email = ""
+    @Published var password = ""
+    
+    init(){
+        let defaults = UserDefaults.standard
+        email = defaults.string(forKey: "lastEmail") ?? ""
+        password = defaults.string(forKey: "lastPassword") ?? ""
+    }
+    
+    func login(user: UserEnv) {
+        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+        
+        if email.isValidEmail() == false {
+            self.alertText = "invalid email"
+            self.toast = true
+            return
+        }
+        
+        if password.isValidPassword() == false  {
+            self.alertText = "invalid password"
+            self.toast = true
+            return
+        }
+        
+        user.checkUpdate(email: email, password: password, completion: { success in
+            if success == false {
+                DispatchQueue.main.asyncAfter(deadline: .now()+0.3, execute: {
+                    self.alertText = "User not found"
+                    self.toast = true
+                    self.objectWillChange.send()
+                })
+            }
+        })
+    }
+   
+}
+
 struct SignInView: View {
     
+    @StateObject var model: SignInViewModel = SignInViewModel()
     @EnvironmentObject var user: UserEnv
-    
-    @State var email = ""
-    @State var password = ""
-    
-    @State var alertText = ""
-    @State var toast = false
+ 
     
     var body: some View {
         
@@ -37,24 +73,30 @@ struct SignInView: View {
             
             
             Section("Sign in") {
-                TextInput(text: $email,
+                TextInput(text: $model.email,
                           title: "Email: ",
                           systemImage: "envelope.fill")
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
                 
-                TextInput(text: $password,
+                TextInput(text: $model.password,
                           title: "Password: ",
                           systemImage: "lock.fill")
             }
             
             HStack {
                 Spacer()
-                Button(action: login) {
-                    Label("Sign in", systemImage: "figure.child.and.lock.open.fill")
-                        .foregroundColor(Color(uiColor: UIColor.label))
+                if user.isLoading == false {
+                    Button(action: {
+                        model.login(user: user)
+                    }) {
+                        Label("Sign in", systemImage: "figure.child.and.lock.open.fill")
+                            .foregroundColor(Color(uiColor: UIColor.label))
+                    }
+                    .buttonStyle(BorderedButtonStyle())
+                } else {
+                    ProgressView()
                 }
-                .buttonStyle(BorderedButtonStyle())
                 Spacer()
             }
             .listRowSeparator(.hidden)
@@ -67,16 +109,16 @@ struct SignInView: View {
                 .listRowBackground(Color.clear)
             
             VStack {
-                if alertText.isEmpty == false {
-                    Text(alertText)
-                }
+           
+                    Text(model.alertText)
+                
             }.frame(maxWidth: .infinity)
                 .multilineTextAlignment(.center)
                 .listRowBackground(Color.clear)
                 .foregroundStyle(Color.red)
             
             VStack {
-                Text("New Green Home App v1.0")
+                Text("New Green Home App v1.2")
                 Text("Copyrighted 2024 by Walter Tremmel")
                 Text("udevwork@gmail.com")
             }
@@ -88,33 +130,42 @@ struct SignInView: View {
             
         }
         .scrollDismissesKeyboard(.interactively)
-        .onAppear {
-            let defaults = UserDefaults.standard
-            email = defaults.string(forKey: "lastEmail") ?? ""
-            password = defaults.string(forKey: "lastPassword") ?? ""
-        }
-        .toast(isPresenting: $toast) {
-            AlertToast(displayMode: .alert, type: .regular, title: self.alertText)
+
+        .toast(isPresenting: $model.toast) {
+            AlertToast(displayMode: .alert, type: .regular, title: model.alertText)
         }
     }
-    
-    func login() {
-        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-        user.checkUpdate(email: email, password: password, completion: { success in
-            if success == false {
-                DispatchQueue.main.asyncAfter(deadline: .now()+0.3, execute: {
-                    self.alertText = "User not found"
-                    self.toast = true
-                })
-             
-            }
-        })
-    }
-   
-    
-    
 }
 
 #Preview {
     SignInView()
+}
+
+extension String {
+    func isValidEmail() -> Bool {
+        return self.contains("@") && self.count > 5
+    }
+    func isValidPassword() -> Bool {
+        return self.count > 5
+    }
+    func isValidName() -> Bool {
+        return self.count > 5
+    }
+    
+    func isUniqUsername() async -> Bool {
+        let query = Fire.base.users.whereField("userName", isEqualTo: self)
+        if let snap = try? await query.getDocuments(), snap.documents.count > 0 {
+            return false
+        }
+        return true
+    }
+    
+    func isUniqEmail() async -> Bool {
+        let query = Fire.base.users.whereField("email", isEqualTo: self)
+        if let snap = try? await query.getDocuments(), snap.documents.count > 0 {
+            return false
+        }
+        return true
+    }
+    
 }

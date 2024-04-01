@@ -107,6 +107,16 @@
         }
       }
     },
+    "Administration notes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hinweise zur Verwaltung"
+          }
+        }
+      }
+    },
     "Administrator" : {
       "localizations" : {
         "de" : {
@@ -117,7 +127,18 @@
         }
       }
     },
+    "Alerts" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "News"
+          }
+        }
+      }
+    },
     "All accounts list" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -127,12 +148,63 @@
         }
       }
     },
+    "All accounts list. Total: %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liste aller Konten. Gesamt: %lld"
+          }
+        }
+      }
+    },
+    "Annotations" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anmerkung"
+          }
+        }
+      }
+    },
     "Apply selected address" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ausgewählte Adresse anwenden"
+          }
+        }
+      }
+    },
+    "Apply this address" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenden Sie diese Adresse an"
+          }
+        }
+      }
+    },
+    "Article:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beitrag:"
+          }
+        }
+      }
+    },
+    "Author: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autor: %@"
           }
         }
       }
@@ -247,6 +319,16 @@
         }
       }
     },
+    "Copy to Clipboard" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In die Zwischenablage kopieren"
+          }
+        }
+      }
+    },
     "Copy to replace" : {
       "localizations" : {
         "de" : {
@@ -337,6 +419,26 @@
         }
       }
     },
+    "Edit note" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notiz bearbeiten"
+          }
+        }
+      }
+    },
+    "edited: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bearbeiten: %@"
+          }
+        }
+      }
+    },
     "Email" : {
       "localizations" : {
         "de" : {
@@ -397,12 +499,12 @@
         }
       }
     },
-    "Floor: %lld" : {
+    "Floor: %@" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etage %lld"
+            "value" : "Etage: %@"
           }
         }
       }
@@ -423,6 +525,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Galerie"
+          }
+        }
+      }
+    },
+    "Hide date" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datum ausblenden"
           }
         }
       }
@@ -527,6 +639,16 @@
         }
       }
     },
+    "Moderator" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderator"
+          }
+        }
+      }
+    },
     "Name" : {
       "localizations" : {
         "de" : {
@@ -547,12 +669,12 @@
         }
       }
     },
-    "New Green Home App v1.0" : {
+    "New Green Home App v1.2" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "New Green Home App v1.0"
+            "value" : "New Green Home App v1.2"
           }
         }
       }
@@ -593,6 +715,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Keine Adresse"
+          }
+        }
+      }
+    },
+    "No notifications!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Benachrichtigungen!"
           }
         }
       }
@@ -687,6 +819,26 @@
         }
       }
     },
+    "Read" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lesen"
+          }
+        }
+      }
+    },
+    "Read all" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles lesen"
+          }
+        }
+      }
+    },
     "REQUIRES A REBOOT OF THE APPLICATION" : {
       "localizations" : {
         "de" : {
@@ -777,6 +929,16 @@
         }
       }
     },
+    "Search and select address" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adresse suchen und auswählen"
+          }
+        }
+      }
+    },
     "Search is empty" : {
       "localizations" : {
         "de" : {
@@ -808,22 +970,12 @@
       }
     },
     "Selected Address:" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ausgewählte Adresse"
-          }
-        }
-      }
-    },
-    "Settings" : {
       "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einstellungen"
+            "value" : "Ausgewählte Adresse"
           }
         }
       }
@@ -858,6 +1010,16 @@
         }
       }
     },
+    "Slider" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Galerie"
+          }
+        }
+      }
+    },
     "Sorting" : {
       "localizations" : {
         "de" : {
@@ -881,6 +1043,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "eng"
+          }
+        }
+      }
+    },
+    "Title:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Titelleiste:"
           }
         }
       }
@@ -921,8 +1093,25 @@
         }
       }
     },
+    "Unlink user" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benutzerverbindung aufheben"
+          }
+        }
+      }
+    },
     "Update credits" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktualisieren"
+          }
+        }
+      }
     },
     "Upload" : {
       "localizations" : {
@@ -976,6 +1165,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Benutzer"
+          }
+        }
+      }
+    },
+    "User notes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benutzerhinweise"
           }
         }
       }

@@ -77,18 +77,24 @@ class BuildingDetailModel: ObservableObject {
   
     func createAndSetupAddress() {
         let batch = db.batch()
+     
+        // Update building name
+        let buildingRef = Fire.base.buildings.document(building.id)
+        let buildingData = building.toDictionary()
+        Task {
+            try? await buildingRef.setData(buildingData)
+        }
         
         guard let address = building.address else { return }
         
         let addressRef = Fire.base.addresses.document(address.id)
-        let buildingRef = Fire.base.buildings.document(building.id)
+     
         
         let addressData = address.toDictionary()
-        let buildingData = building.toDictionary()
         
         Task {
-            try? await addressRef.setData(addressData)
-            try? await buildingRef.setData(buildingData)
+            // create address doc
+            batch.setData(addressData, forDocument: addressRef)
             
             let users = try? await Fire.base.users.whereField("linkedBuildingID", isEqualTo: building.id).getDocuments()
             
@@ -100,7 +106,6 @@ class BuildingDetailModel: ObservableObject {
           
             try await batch.commit()
             DispatchQueue.main.async {
-             
                 self.objectWillChange.send()
             }
             self.update()
@@ -201,12 +206,12 @@ class BuildingDetailModel: ObservableObject {
     
     func update() {
         self.fetchLivingSpaces()
-
     }
 }
 
 struct BuildingDetailView: View {
-    
+    @EnvironmentObject var user: UserEnv
+
     @EnvironmentObject var clipboard: InAppClipboard
     @StateObject var model: BuildingDetailModel
     @State private var avatarItem: PhotosPickerItem?
@@ -242,6 +247,7 @@ struct BuildingDetailView: View {
                 TextInput(text: $model.building.customName,
                           title: "Name: ",
                           systemImage: "pencil")
+                .disabled(user.isAdmin == false)
                 
                 VStack {
                     Button {
@@ -249,7 +255,7 @@ struct BuildingDetailView: View {
                         self.sheets = .city
                     } label: {
                         AddressListItemWithMapView(address: $model.building.address)
-                    }
+                    } .disabled(user.isAdmin == false)
                 }
             
                 Button {
@@ -258,24 +264,24 @@ struct BuildingDetailView: View {
                     showToast.toggle()
                 } label: {
                     Label("Save", systemImage: "icloud.and.arrow.up.fill")
-                }
+                } .disabled(user.isAdmin == false)
             }
             
             Section() {
                 NavigationLink {
-                    DocumentsView(model: .init(id: model.building.id), editble: true)
+                    DocumentsView(model: .init(id: model.building.id), editble: user.isAdmin ?? false)
                 } label: {
                     Label("Documents", systemImage: "doc.on.doc.fill")
                 }.foregroundColor(Color(UIColor.label))
                 
                 NavigationLink {
-                    PhotoGalleryView(model: .init(id: model.building.id))
+                    PhotoGalleryView(model: .init(id: model.building.id), editble: user.isAdmin ?? false)
                 } label: {
                     Label("Photos", systemImage: "photo.on.rectangle.angled")
                 }.foregroundColor(Color(UIColor.label))
                 
                 NavigationLink {
-                    UserNotesView(model: .init(id: model.building.id), editble: true)
+//                    UserNotesView(model: .init(id: model.building.id), editble: user.isAdmin ?? false)
                 } label: {
                     Label("Notes", systemImage: "note.text")
                 }.foregroundColor(Color(UIColor.label))
@@ -307,7 +313,7 @@ struct BuildingDetailView: View {
                                     model.delete(livingSpace: obj)
                                 } label: {
                                     Label("Delete", systemImage: "trash.fill").foregroundStyle(Color.red)
-                                }
+                                } .disabled(user.isAdmin == false)
                             }
                     }
                 }
@@ -323,7 +329,7 @@ struct BuildingDetailView: View {
                 self.model.createLivingSpace()
             } label: {
                 Label("Create livingspace", systemImage: "plus.circle.fill")
-            }
+            } .disabled(user.isAdmin == false)
        
             
         }
@@ -349,13 +355,14 @@ struct BuildingDetailView: View {
             }
         }
         .toast(isPresenting: $showToast){
-            AlertToast(type: .regular, title: "OK!")
+            AlertToast(type: .regular, title: "Saved!")
         }
         .toast(isPresenting: $model.showLoadingAlert) {
             AlertToast(type: .loading, title: "Loading")
         }
         .toolbar {
             PhotosPicker("Change picture", selection: $avatarItem, matching: .images)
+                .disabled(user.isAdmin == false)
                 .onChange(of: avatarItem)  {
                     Task {
                         if let loaded = try? await avatarItem?.loadTransferable(type: Data.self) {

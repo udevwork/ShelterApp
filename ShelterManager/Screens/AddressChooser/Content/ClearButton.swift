@@ -1,10 +1,3 @@
-//
-//  ClearButton.swift
-//  AddressAutocomplete
-//
-//  Created by Maksim Kalik on 11/30/22.
-//
-
 import SwiftUI
 
 struct ClearButton: View {
